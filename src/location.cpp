@@ -1,6 +1,6 @@
 #include "location.hpp"
 
-#include "map_configs.hpp"
+#include "constants.hpp"
 
 namespace libpmg {
     

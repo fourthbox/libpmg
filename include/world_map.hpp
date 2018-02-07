@@ -1,0 +1,5 @@
+#ifndef LIBPMG_WORLD_MAP_HPP_
+#define LIBPMG_WORLD_MAP_HPP_
+
+
+#endif /* LIBPMG_WORLD_MAP_HPP_ */

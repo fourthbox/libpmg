@@ -1,28 +1,15 @@
 #include "map.hpp"
 
+#include "constants.hpp"
 #include "utils.hpp"
 
 namespace libpmg {
 
 typedef std::shared_ptr<Location> Location_p;
 typedef std::shared_ptr<Tile> Tile_p;
-
+    
 Map::Map() {
     map_uuid_ = Utils::GenerateUUID();
-    
-    configs_ = std::make_shared<MapConfigs>(MapConfigs());
-    map_.clear();
-}
-
-Map::Map(std::shared_ptr<Map> other) {
-    map_uuid_ = other->map_uuid_;
-    configs_ = other->configs_;
-    map_ = other->map_;
-    room_list = other->room_list;
-}
-
-void Map::ResetPathFlags() {
-    for (auto const &tile : map_) tile->is_explored = false;
 }
 
 std::pair<size_t, size_t> Map::GetMapSize() {
@@ -87,10 +74,14 @@ void Map::Print() {
     
     Utils::LogDebug("Map", output);
 }
-
+    
 void Map::ResetLocationCosts() {
     for (auto const &tile : map_)
         tile->cost = kDefaultEmptyTileCost;
+}
+
+void Map::ResetPathFlags() {
+    for (auto const &tile : map_) tile->is_explored = false;
 }
     
 }

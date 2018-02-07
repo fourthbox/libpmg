@@ -5,8 +5,6 @@
 
 namespace libpmg {
     
-struct MapConfigs;
-
 class Rect {
 public:
     Rect();
@@ -17,7 +15,6 @@ public:
     Rect& operator--();
     Rect operator--(int);
     
-    static Rect GetRndRect(MapConfigs configs);
     static Rect GetRndRect(std::size_t min_x,
                            std::size_t max_x,
                            std::size_t min_y,

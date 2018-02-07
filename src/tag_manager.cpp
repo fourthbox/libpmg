@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "map_configs.hpp"
+#include "constants.hpp"
 #include "tile.hpp"
 
 namespace libpmg {

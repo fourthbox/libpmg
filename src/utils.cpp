@@ -1,7 +1,6 @@
 #include "utils.hpp"
 
 #include "map.hpp"
-#include "priority_queue.hpp"
 
 namespace libpmg {
     

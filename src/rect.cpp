@@ -53,13 +53,6 @@ Rect Rect::operator--(int) {
     return result;
 }
 
-Rect Rect::GetRndRect(MapConfigs configs) {
-    return GetRndRect(0, configs.map_width_-1,
-                      0, configs.map_height_-1,
-                      configs.min_room_width_, configs.max_room_width_,
-                      configs.min_room_height_, configs.max_room_height_);
-}
-
 Rect Rect::GetRndRect(size_t min_x,
                       size_t max_x,
                       size_t min_y,

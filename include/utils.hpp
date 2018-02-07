@@ -1,6 +1,7 @@
 #ifndef LIBPMG_UTILS_HPP_
 #define LIBPMG_UTILS_HPP_
 
+#include <queue>
 #include <unordered_map>
 
 #include <boost/uuid/uuid.hpp>
@@ -10,6 +11,32 @@
 #include "map.hpp"
 
 namespace libpmg {
+    
+template<typename T, typename priority_t>
+struct PriorityQueue {
+    typedef std::pair<priority_t, T> PQElement;
+    std::priority_queue<PQElement, std::vector<PQElement>,
+    std::greater<PQElement>> elements;
+    
+    inline bool empty() const { return elements.empty(); }
+    
+    inline void push(T item, priority_t priority) {
+        elements.emplace(priority, item);
+    }
+    
+    inline T pop() {
+        T best_item = elements.top().second;
+        elements.pop();
+        return best_item;
+    }
+    
+    inline std::size_t size() {
+        if (elements.size() < std::numeric_limits<std::size_t>::max())
+            return elements.size();
+        
+        return std::numeric_limits<std::size_t>::max();
+    }
+};
 
 struct Utils {
     static inline void LogDebug(std::string const &message) {

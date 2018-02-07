@@ -1,5 +1,14 @@
 ## [unreleased]
 ### Added
+- Added FastNoise <github.com/Auburns/FastNoise> (MIT License) as support library
+- Added the possibility to generate world maps
+
+### Changed
+- Major Refactoring
+- MapBuilder now cannot be "chain called" in roder to build a map
+
+## [v0.2.3]
+### Added
 - Added a function to check if a tile is adjacent to a room
 
 ### Removed

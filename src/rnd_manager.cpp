@@ -1,6 +1,6 @@
 #include "rnd_manager.hpp"
 
-#include "map_configs.hpp"
+#include "constants.hpp"
 
 namespace libpmg {
     
