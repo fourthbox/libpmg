@@ -6,9 +6,9 @@
 
 namespace libpmg {
     
-class DungeonConfigs : public MapConfigs {
+class DungeonMapConfigs : public MapConfigs {
 public:
-    DungeonConfigs()
+    DungeonMapConfigs()
     : rooms_ {20},
     max_room_placement_attempts_ {10},
     max_room_width_ {12},
@@ -32,9 +32,11 @@ public:
     DungeonMap();
     DungeonMap(std::shared_ptr<DungeonMap> other);
         
-    std::shared_ptr<DungeonConfigs> dungeon_configs;
+    std::shared_ptr<DungeonMapConfigs> dungeon_configs;
     
-    std::vector<Room> room_list; // privatize
+private:
+    std::vector<Room> room_list_;
+    
 };
     
 }

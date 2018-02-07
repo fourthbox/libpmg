@@ -32,19 +32,27 @@ std::shared_ptr<Map> DungeonBuilder::Build() {
 }
 
 void DungeonBuilder::SetDefaultPathAlgorithm(PathAlgorithm algorithm) {
+    assert (!map_->map_.empty());
+
     default_path_algorithm_ = algorithm;
 }
 
 void DungeonBuilder::SetDiagonalCorridors(bool allow) {
+    assert (!map_->map_.empty());
+
     allow_diagonal_corridors_ = allow;
 }
 
 void DungeonBuilder::SetMapSize(size_t width, size_t height) {
+    assert (!map_->map_.empty());
+
     map_->configs_->map_width_ = width;
     map_->configs_->map_height_ = height;
 }
 
 void DungeonBuilder::SetMaxRooms(size_t rooms) {
+    assert (!map_->map_.empty());
+
     map_->dungeon_configs->rooms_ = rooms;
 }
 
@@ -139,18 +147,19 @@ void DungeonBuilder::ConnectRooms(Room room1, Room room2) {
 }
 
 void DungeonBuilder::GenerateCorridors() {
-    if (map_->room_list.empty() || map_->map_.empty()) {
+    if (map_->room_list_.empty() || map_->map_.empty()) {
         Utils::LogWarning("DungeonBuilder::placeCorridors", "There are no rooms, or no free space. Skipping corridor generation...");
+        return;
     }
     
-    for (auto i {0}; i < map_->room_list.size() - 1; i++)
-        ConnectRooms(map_->room_list.at(i), map_->room_list.at(i + 1));
+    for (auto i {0}; i < map_->room_list_.size() - 1; i++)
+        ConnectRooms(map_->room_list_.at(i), map_->room_list_.at(i + 1));
     
     // In case of odd rooms
-    if (map_->room_list.size()%2 != 0)
+    if (map_->room_list_.size()%2 != 0)
         ConnectRooms(
-                     map_->room_list.at(map_->room_list.size()-2),
-                     map_->room_list.at(map_->room_list.size()-1));
+                     map_->room_list_.at(map_->room_list_.size()-2),
+                     map_->room_list_.at(map_->room_list_.size()-1));
 }
 
 void DungeonBuilder::InitMap() {
@@ -233,12 +242,12 @@ void DungeonBuilder::PlaceDoor(Tile_p tile) {
 }
 
 void DungeonBuilder::GenerateDoors() {
-    if (map_->room_list.empty() || map_->map_.empty()) {
+    if (map_->room_list_.empty() || map_->map_.empty()) {
         Utils::LogWarning("DungeonBuilder::placeCorridors", "There are no rooms, or no free space. Skipping door generation...");
         return;
     }
     
-    for (auto &room : map_->room_list) {
+    for (auto &room : map_->room_list_) {
         for (auto w {0}; w < (++room.Area::GetRect()).GetWidth(); w++) {
             auto tile {map_->GetTile((++room.Area::GetRect()).GetX() + w, (++room.Area::GetRect()).GetY())};
             PlaceDoor(tile);
@@ -276,7 +285,7 @@ void DungeonBuilder::PlaceRoom(Room room) {
     UpdateRect(room.GetRect(),
                {TagManager::GetInstance().floor_tag},
                {TagManager::GetInstance().wall_tag});
-    map_->room_list.push_back(room);
+    map_->room_list_.push_back(room);
     room.Print();
 }
 
@@ -306,7 +315,7 @@ bool DungeonBuilder::CanPlaceRect(Rect rect,
 }
 
 void DungeonBuilder::SetMaxRoomPlacementAttempts(size_t attempts) {
-    assert(attempts != 0);
+    assert(attempts != 0 && !map_->map_.empty());
     
     map_->dungeon_configs->max_room_placement_attempts_ = attempts;
 }
@@ -315,7 +324,8 @@ void DungeonBuilder::SetMaxRoomSize(size_t width, size_t height) {
     assert(width < map_->configs_->map_width_
            && height < map_->configs_->map_height_
            && width >= map_->dungeon_configs->min_room_width_
-           && height >= map_->dungeon_configs->min_room_height_);
+           && height >= map_->dungeon_configs->min_room_height_
+           && !map_->map_.empty());
     
     map_->dungeon_configs->max_room_width_ = width;
     map_->dungeon_configs->max_room_height_ = height;
@@ -325,7 +335,8 @@ void DungeonBuilder::SetMinRoomSize(size_t width, size_t height) {
     assert(width < map_->configs_->map_width_
            && height < map_->configs_->map_height_
            && width >= map_->dungeon_configs->min_room_width_
-           && height >= map_->dungeon_configs->min_room_height_);
+           && height >= map_->dungeon_configs->min_room_height_
+           && !map_->map_.empty());
     
     map_->dungeon_configs->min_room_width_ = width;
     map_->dungeon_configs->min_room_height_ = height;
