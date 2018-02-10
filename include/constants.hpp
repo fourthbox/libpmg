@@ -1,3 +1,11 @@
+/**
+ The header containing all the constants needed.
+ It's mostly default values.
+ @file constants.hpp
+ @author pat <pat@fourthbox.com>
+ */
+
+
 #ifndef LIBPMG_CONSTANTS_HPP_
 #define LIBPMG_CONSTANTS_HPP_
 

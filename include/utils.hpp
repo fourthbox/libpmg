@@ -1,3 +1,8 @@
+/**
+ @file tile.hpp
+ @author pat <pat@fourthbox.com>
+ */
+
 #ifndef LIBPMG_UTILS_HPP_
 #define LIBPMG_UTILS_HPP_
 
@@ -11,7 +16,10 @@
 #include "map.hpp"
 
 namespace libpmg {
-    
+
+/**
+ Simple implementation of a priority queue.
+ */
 template<typename T, typename priority_t>
 struct PriorityQueue {
     typedef std::pair<priority_t, T> PQElement;
@@ -38,27 +46,60 @@ struct PriorityQueue {
     }
 };
 
+/**
+ A struct containing utility functions
+ */
 struct Utils {
+    
+    /**
+     Prints debug log informations.
+     @param message The message to be printed
+     */
     static inline void LogDebug(std::string const &message) {
         
         printf("%s\n", message.c_str());
     }
     
+    /**
+     Prints debug log informations.
+     @param context A string indicating the context for better describing the message
+     @param message The message to be printed
+     */
     static inline void LogDebug(std::string const &context, std::string const &message) {
         
         printf("%s:: %s\n", context.c_str(), message.c_str());
     }
     
+    /**
+     Prints debug log informations with a warning sign.
+     @param context A string indicating the context for better describing the message
+     @param message The message to be printed
+     */
     static inline void LogWarning(std::string const &context, std::string const &message) {
         
         printf("[WARNING] %s:: %s\n", context.c_str(), message.c_str());
     }
-    
+
+    /**
+     Prints debug log informations with an error sign.
+     @param context A string indicating the context for better describing the message
+     @param message The message to be printed
+     */
     static inline void LogError(std::string const &context, std::string const &message) {
         
         printf("[ERROR] %s:: %s\n", context.c_str(), message.c_str());
     }
     
+    /**
+     A function that uses the BFS algorithm to find the shortest path between 2 Location on a Map.
+     @param start_coor A pair of coordinats representing the start location
+     @param end_coor A pair of coordinats representing the end location
+     @param map A pointer to the Map where the search is happening
+     @param diagonals Whether diagonal paths should be used (compatible with FOUR_DIRECTIONAL, creating a "stair" effect)
+     @param dir Whether locations can be connected diagonally
+     @param reset_path_flags Whether path flags should be reset before running the algorithm
+     @return An unordered map of locations. The key is the location "connected" to the value on the generated path
+     */
     static std::shared_ptr<std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>>>
     BreadthFirstSearch(std::pair<std::size_t, std::size_t> start_coor,
                        std::pair<std::size_t, std::size_t> end_coor,
@@ -67,6 +108,15 @@ struct Utils {
                        MoveDirections dir,
                        bool reset_path_flags = true);
     
+    /**
+     A function that uses the Dijkstra algorithm to find the shortest path between 2 Location on a Map.
+     @param start_coor A pair of coordinats representing the start location
+     @param end_coor A pair of coordinats representing the end location
+     @param map A pointer to the Map where the search is happening
+     @param dir Whether locations can be connected diagonally
+     @param reset_path_flags Whether path flags should be reset before running the algorithm
+     @return An unordered map of locations. The key is the location "connected" to the value on the generated path
+     */
     static std::shared_ptr<std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>>>
     Dijkstra(std::pair<std::size_t, std::size_t> start_coor,
              std::pair<std::size_t, std::size_t> end_coor,
@@ -74,6 +124,15 @@ struct Utils {
              MoveDirections dir,
              bool reset_path_flags = true);
     
+    /**
+     A function that uses the Astar algorithm to find the shortest path between 2 Location on a Map.
+     @param start_coor A pair of coordinats representing the start location
+     @param end_coor A pair of coordinats representing the end location
+     @param map A pointer to the Map where the search is happening
+     @param dir Whether locations can be connected diagonally
+     @param reset_path_flags Whether path flags should be reset before running the algorithm
+     @return An unordered map of locations. The key is the location "connected" to the value on the generated path
+     */
     static std::shared_ptr<std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>>>
     Astar(std::pair<std::size_t, std::size_t> start_coor,
           std::pair<std::size_t, std::size_t> end_coor,
@@ -81,6 +140,10 @@ struct Utils {
           MoveDirections dir,
           bool reset_path_flags = true);
     
+    /**
+     Generates a random unique id.
+     @return A string with a UUID
+     */
     static std::string GenerateUUID() { return boost::uuids::to_string(boost::uuids::random_generator()()); }
 };
 

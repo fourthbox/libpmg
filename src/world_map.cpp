@@ -3,15 +3,13 @@
 namespace libpmg {
     
 WorldMap::WorldMap() {
-    world_configs = std::make_shared<WorldMapConfigs>();
-    configs_ = world_configs;
+    configs_ = std::make_shared<WorldMapConfigs>();
 }
 
 WorldMap::WorldMap(std::shared_ptr<WorldMap> other) {
     map_uuid_ = other->map_uuid_;
-    world_configs = other->world_configs;
-    configs_ = world_configs;
+    configs_ = other->configs_;
     map_ = other->map_;
 }
-    
+        
 }

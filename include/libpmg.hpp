@@ -1,3 +1,8 @@
+/**
+ @file libpmg.hpp
+ @author pat <pat@fourthbox.com>
+ */
+
 #ifndef LIBPMG_HPP_
 #define LIBPMG_HPP_
 

@@ -32,15 +32,15 @@ LocationMap_p Utils::Astar(std::pair<size_t, size_t> start_coor,
     
     //Start point
     start_tile->is_explored = true;
-    cost_so_far[start_tile] = start_tile->cost;
-    frontier.push(start_tile, start_tile->cost);
+    cost_so_far[start_tile] = start_tile->cost_;
+    frontier.push(start_tile, start_tile->cost_);
     
     while (!frontier.empty()) {
         auto current {frontier.pop()};
         
         for (auto const &nei : map->GetNeighbors(current, dir)) {
             if (map->GetTile(nei->GetXY())->is_explored == false) {
-                auto new_cost {cost_so_far[current] + nei->cost};
+                auto new_cost {cost_so_far[current] + nei->cost_};
                 if (!cost_so_far.count(nei) || new_cost < cost_so_far[nei]) {
                     cost_so_far[nei] = new_cost;
                     float priority {new_cost + heuristic(nei, end_tile)};
@@ -74,15 +74,15 @@ LocationMap_p Utils::Dijkstra(std::pair<size_t, size_t> start_coor,
     
     //Start point
     start_tile->is_explored = true;
-    cost_so_far[start_tile] = start_tile->cost;
-    frontier.push(start_tile, start_tile->cost);
+    cost_so_far[start_tile] = start_tile->cost_;
+    frontier.push(start_tile, start_tile->cost_);
     
     while (!frontier.empty()) {
         auto current {frontier.pop()};
         
         for (auto const &nei : map->GetNeighbors(current, dir)) {
             if (map->GetTile(nei->GetXY())->is_explored == false) {
-                auto new_cost {cost_so_far[current] + nei->cost};
+                auto new_cost {cost_so_far[current] + nei->cost_};
                 if (!cost_so_far.count(nei) || new_cost < cost_so_far[nei]) {
                     cost_so_far[nei] = new_cost;
                     frontier.push(nei, new_cost);

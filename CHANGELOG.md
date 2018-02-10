@@ -2,6 +2,7 @@
 ### Added
 - Added FastNoise <github.com/Auburns/FastNoise> (MIT License) as support library
 - Added the possibility to generate world maps
+- Added comments in header files
 
 ### Changed
 - Major Refactoring

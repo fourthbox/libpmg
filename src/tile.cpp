@@ -12,9 +12,9 @@ char Tile::GetChar() {
     auto sprite {'.'};
     
     for (auto const &tag : tags_) {
-        if (tag->draw_priority > priority) {
-            sprite = tag->sprite;
-            priority = tag->draw_priority;
+        if (tag->draw_priority_ > priority) {
+            sprite = tag->sprite_;
+            priority = tag->draw_priority_;
         }
     }
     

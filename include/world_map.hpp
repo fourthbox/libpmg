@@ -1,3 +1,8 @@
+/**
+ @file world_map.hpp
+ @author pat <pat@fourthbox.com>
+ */
+
 #ifndef LIBPMG_WORLD_MAP_HPP_
 #define LIBPMG_WORLD_MAP_HPP_
 
@@ -6,7 +11,10 @@
 
 namespace libpmg {
     
-class WorldMapConfigs : public MapConfigs {
+/**
+ Struct that holds the DungeonMap configuration values
+ */
+struct WorldMapConfigs : public MapConfigs {
 public:
     WorldMapConfigs()
     : noise_type_ {FastNoise::PerlinFractal},
@@ -28,15 +36,34 @@ public:
     float sea_level_multiplier_;
     float pole_elevation_multiplier_;
 };
-    
+
+/**
+ Class that holds and manages all tile informations for a world map.
+ */
 class WorldMap : public Map {
     friend class WorldBuilder;
 
 public:
     WorldMap();
     WorldMap(std::shared_ptr<WorldMap> other);
+    ~WorldMap() {}
     
-    std::shared_ptr<WorldMapConfigs> world_configs;
+    /**
+     Gets the configuration MapConfigs for this map.
+     @return A pointer to the configuration MapConfigs for this map.
+     */
+    std::shared_ptr<MapConfigs> GetConfigs() override { return configs_; }
+    
+    /**
+     Gets the map.
+     @return A vector containing all the Tile in this map
+     */
+    std::vector<std::shared_ptr<Tile>> &GetMap() override { return map_; }
+        
+private:
+    std::vector<std::shared_ptr<Tile>> map_;
+    std::shared_ptr<WorldMapConfigs> configs_;
+
 };
 
 }

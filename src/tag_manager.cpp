@@ -10,10 +10,10 @@ namespace libpmg {
 typedef std::shared_ptr<Tag> Tag_p;
 
 TagManager::TagManager() {
-    floor_tag = std::make_shared<Tag>(Tag(kDefaultEmptyChar, kDefaultEmptyDrawPriority, "floor"));
-    wall_tag = std::make_shared<Tag>(Tag(kDefaultWallChar, kDefaultWallDrawPriority, "wall"));
-    door_tag = std::make_shared<Tag>(Tag(kDefaultDoorChar, kDefaultDoorDrawPriority, "door"));
-    explored_tag = std::make_shared<Tag>(Tag(kDefaultEmptyChar, kDefaultEmptyDrawPriority, "explored"));
+    floor_tag_ = std::make_shared<Tag>(Tag(kDefaultEmptyChar, kDefaultEmptyDrawPriority, "floor"));
+    wall_tag_ = std::make_shared<Tag>(Tag(kDefaultWallChar, kDefaultWallDrawPriority, "wall"));
+    door_tag_ = std::make_shared<Tag>(Tag(kDefaultDoorChar, kDefaultDoorDrawPriority, "door"));
+    explored_tag_ = std::make_shared<Tag>(Tag(kDefaultEmptyChar, kDefaultEmptyDrawPriority, "explored"));
 }
 
 void TagManager::RemoveTaggable(libpmg::Taggable &taggable, Tag_p tag) {

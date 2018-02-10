@@ -13,7 +13,7 @@ Map::Map() {
 }
 
 std::pair<size_t, size_t> Map::GetMapSize() {
-    return std::make_pair(configs_->map_width_, configs_->map_height_);
+    return std::make_pair(GetConfigs()->map_width_, GetConfigs()->map_height_);
 }
 
 std::vector<Location_p> Map::GetNeighbors(Location_p location, MoveDirections dir) {
@@ -56,7 +56,7 @@ Tile_p Map::GetTile(size_t x, size_t y) {
     if (!BoundsCheck(x, y))
         return nullptr;
     
-    auto t {map_[y * configs_->map_width_ + x]};
+    auto t {GetMap()[y * GetConfigs()->map_width_ + x]};
     
     return t;
 }
@@ -64,8 +64,8 @@ Tile_p Map::GetTile(size_t x, size_t y) {
 void Map::Print() {
     std::string output {"\n"};
     
-    for ( size_t i {0}; i < configs_->map_height_; i++ ) {
-        for ( size_t j {0}; j < configs_->map_width_; j++ ) {
+    for ( size_t i {0}; i < GetConfigs()->map_height_; i++ ) {
+        for ( size_t j {0}; j < GetConfigs()->map_width_; j++ ) {
             if (auto t {GetTile(j, i)}; t != nullptr)
                 output += t->GetChar();
         }
@@ -76,12 +76,12 @@ void Map::Print() {
 }
     
 void Map::ResetLocationCosts() {
-    for (auto const &tile : map_)
-        tile->cost = kDefaultEmptyTileCost;
+    for (auto const &tile : GetMap())
+        tile->cost_ = kDefaultEmptyTileCost;
 }
 
 void Map::ResetPathFlags() {
-    for (auto const &tile : map_) tile->is_explored = false;
+    for (auto const &tile : GetMap()) tile->is_explored = false;
 }
     
 }

@@ -32,28 +32,28 @@ std::shared_ptr<Map> DungeonBuilder::Build() {
 }
 
 void DungeonBuilder::SetDefaultPathAlgorithm(PathAlgorithm algorithm) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     default_path_algorithm_ = algorithm;
 }
 
 void DungeonBuilder::SetDiagonalCorridors(bool allow) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     allow_diagonal_corridors_ = allow;
 }
 
 void DungeonBuilder::SetMapSize(size_t width, size_t height) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     map_->configs_->map_width_ = width;
     map_->configs_->map_height_ = height;
 }
 
 void DungeonBuilder::SetMaxRooms(size_t rooms) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
-    map_->dungeon_configs->rooms_ = rooms;
+    map_->configs_->rooms_ = rooms;
 }
 
 // Returns the Location from which come from coords
@@ -130,7 +130,7 @@ void DungeonBuilder::ConnectRooms(Room room1, Room room2) {
     
     // Flags the generated corridor with the proper tags
     while (end != start) {
-        map_->GetTile(end->GetXY())->UpdateTags({TagManager::GetInstance().floor_tag}, {TagManager::GetInstance().wall_tag});
+        map_->GetTile(end->GetXY())->UpdateTags({TagManager::GetInstance().floor_tag_}, {TagManager::GetInstance().wall_tag_});
         end = from(end, path);
     }
     
@@ -138,10 +138,10 @@ void DungeonBuilder::ConnectRooms(Room room1, Room room2) {
     // avoid corridors intersecating too much
     auto wall_cost {kDefaultWallTileCost};
     for (auto const &tile : map_->map_){
-        if (tile->Taggable::HasTag(TagManager::GetInstance().floor_tag)) {
-            tile->cost = wall_cost;
+        if (tile->Taggable::HasTag(TagManager::GetInstance().floor_tag_)) {
+            tile->cost_ = wall_cost;
             for (auto const &nei : map_->GetNeighbors(tile, MoveDirections::EIGHT_DIRECTIONAL))
-                nei->cost = wall_cost;
+                nei->cost_ = wall_cost;
         }
     }
 }
@@ -165,7 +165,7 @@ void DungeonBuilder::GenerateCorridors() {
 void DungeonBuilder::InitMap() {
     for (auto i {0}; i < map_->configs_->map_height_; i++) {
         for (auto j {0}; j < map_->configs_->map_width_; j++)
-            map_->map_.push_back(std::make_shared<Tile>(Tile (j, i, {TagManager::GetInstance().wall_tag})));
+            map_->map_.push_back(std::make_shared<Tile>(Tile (j, i, {TagManager::GetInstance().wall_tag_})));
     }
 }
 
@@ -180,36 +180,30 @@ void DungeonBuilder::GenerateRooms() {
     }
     
     //  Generate each room.
-    for (auto i {0}; i < map_->dungeon_configs->rooms_; i++) {
-        for (auto j {0}; j < map_->dungeon_configs->max_room_placement_attempts_; j++) {
+    for (auto i {0}; i < map_->configs_->rooms_; i++) {
+        for (auto j {0}; j < map_->configs_->max_room_placement_attempts_; j++) {
             
             //          Get random rect
             auto rndRect {Rect::GetRndRect(1, map_->configs_->map_width_-1,
                                            1, map_->configs_->map_height_-1,
-                                           map_->dungeon_configs->min_room_width_, map_->dungeon_configs->max_room_width_,
-                                           map_->dungeon_configs->min_room_height_, map_->dungeon_configs->max_room_height_)};
+                                           map_->configs_->min_room_width_, map_->configs_->max_room_width_,
+                                           map_->configs_->min_room_height_, map_->configs_->max_room_height_)};
             
-            if (CanPlaceRect(++rndRect, {TagManager::GetInstance().floor_tag})) {
+            if (CanPlaceRect(++rndRect, {TagManager::GetInstance().floor_tag_})) {
                 PlaceRoom(Room(--rndRect));
                 break;
             }
             
-            if (j == map_->dungeon_configs->max_room_placement_attempts_ - 1)
+            if (j == map_->configs_->max_room_placement_attempts_ - 1)
                 Utils::LogDebug( "DungeonBuilder", "Last room placement attempt failed. Moving on...");
         }
     }
 }
 
-/**
- Place a door if the tile is eligible.
- In order be aligible for a door a tile must be adjacent to no more then two wall tiles, and they must be opposite to eachother.
- 
- @param tile The tile that will host the door.
- */
 void DungeonBuilder::PlaceDoor(Tile_p tile) {
     assert (tile != nullptr);
     
-    if (!tile->HasTag(TagManager::GetInstance().floor_tag))
+    if (!tile->HasTag(TagManager::GetInstance().floor_tag_))
         return;
     
     //    Get the four neighbours
@@ -221,11 +215,11 @@ void DungeonBuilder::PlaceDoor(Tile_p tile) {
     auto wall_count {0};
     for (auto const &nei : neis) {
         // If one neighbour has a door, exit
-        if (map_->GetTile(nei->GetXY())->HasTag(TagManager::GetInstance().door_tag))
+        if (map_->GetTile(nei->GetXY())->HasTag(TagManager::GetInstance().door_tag_))
             return;
         
         // Count how many neighbours has walls
-        if (map_->GetTile(nei->GetXY())->HasTag(TagManager::GetInstance().wall_tag))
+        if (map_->GetTile(nei->GetXY())->HasTag(TagManager::GetInstance().wall_tag_))
             wall_count++;
     }
     
@@ -234,11 +228,11 @@ void DungeonBuilder::PlaceDoor(Tile_p tile) {
         return;
     
     // Checks if the 2 neighbouring wall tiles are opposed to eachother
-    if ((map_->GetTile(tile->GetX(), tile->GetY()-1)->HasTag(TagManager::GetInstance().wall_tag)
-         && map_->GetTile(tile->GetX(), tile->GetY()+1)->HasTag(TagManager::GetInstance().wall_tag))
-        || (map_->GetTile(tile->GetX()-1, tile->GetY())->HasTag(TagManager::GetInstance().wall_tag)
-            && map_->GetTile(tile->GetX()+1, tile->GetY())->HasTag(TagManager::GetInstance().wall_tag)))
-        tile->AddTag(TagManager::GetInstance().door_tag);
+    if ((map_->GetTile(tile->GetX(), tile->GetY()-1)->HasTag(TagManager::GetInstance().wall_tag_)
+         && map_->GetTile(tile->GetX(), tile->GetY()+1)->HasTag(TagManager::GetInstance().wall_tag_))
+        || (map_->GetTile(tile->GetX()-1, tile->GetY())->HasTag(TagManager::GetInstance().wall_tag_)
+            && map_->GetTile(tile->GetX()+1, tile->GetY())->HasTag(TagManager::GetInstance().wall_tag_)))
+        tile->AddTag(TagManager::GetInstance().door_tag_);
 }
 
 void DungeonBuilder::GenerateDoors() {
@@ -283,8 +277,8 @@ void DungeonBuilder::PlaceRoom(Room room) {
     }
     
     UpdateRect(room.GetRect(),
-               {TagManager::GetInstance().floor_tag},
-               {TagManager::GetInstance().wall_tag});
+               {TagManager::GetInstance().floor_tag_},
+               {TagManager::GetInstance().wall_tag_});
     map_->room_list_.push_back(room);
     room.Print();
 }
@@ -306,7 +300,9 @@ bool DungeonBuilder::CanPlaceRect(Rect rect,
     
     for (auto i { rect.GetY()}; i < rect.GetY() + rect.GetHeight(); i++) {
         for (auto j {rect.GetX()}; j < rect.GetX() + rect.GetWidth(); j++) {
-            if (map_->GetTile(j, i) == nullptr || map_->GetTile(j, i)->HasAnyTag(black_list))
+            if (map_->GetTile(j, i) == nullptr
+                || (map_->GetTile(j, i)->HasAnyTag(black_list)
+                    && !map_->GetTile(j, i)->HasAnyTag(white_list)))
                 return false;
         }
     }
@@ -315,31 +311,31 @@ bool DungeonBuilder::CanPlaceRect(Rect rect,
 }
 
 void DungeonBuilder::SetMaxRoomPlacementAttempts(size_t attempts) {
-    assert(attempts != 0 && !map_->map_.empty());
+    assert(attempts != 0 && map_->map_.empty());
     
-    map_->dungeon_configs->max_room_placement_attempts_ = attempts;
+    map_->configs_->max_room_placement_attempts_ = attempts;
 }
 
 void DungeonBuilder::SetMaxRoomSize(size_t width, size_t height) {
     assert(width < map_->configs_->map_width_
            && height < map_->configs_->map_height_
-           && width >= map_->dungeon_configs->min_room_width_
-           && height >= map_->dungeon_configs->min_room_height_
-           && !map_->map_.empty());
+           && width >= map_->configs_->min_room_width_
+           && height >= map_->configs_->min_room_height_
+           && map_->map_.empty());
     
-    map_->dungeon_configs->max_room_width_ = width;
-    map_->dungeon_configs->max_room_height_ = height;
+    map_->configs_->max_room_width_ = width;
+    map_->configs_->max_room_height_ = height;
 }
 
 void DungeonBuilder::SetMinRoomSize(size_t width, size_t height) {
     assert(width < map_->configs_->map_width_
            && height < map_->configs_->map_height_
-           && width >= map_->dungeon_configs->min_room_width_
-           && height >= map_->dungeon_configs->min_room_height_
-           && !map_->map_.empty());
+           && width >= map_->configs_->min_room_width_
+           && height >= map_->configs_->min_room_height_
+           && map_->map_.empty());
     
-    map_->dungeon_configs->min_room_width_ = width;
-    map_->dungeon_configs->min_room_height_ = height;
+    map_->configs_->min_room_width_ = width;
+    map_->configs_->min_room_height_ = height;
 }
 
 void DungeonBuilder::UpdateRect(Rect rect,

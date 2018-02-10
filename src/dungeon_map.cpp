@@ -3,14 +3,12 @@
 namespace libpmg {
     
 DungeonMap::DungeonMap() {
-    dungeon_configs = std::make_shared<DungeonMapConfigs>();
-    configs_ = dungeon_configs;
+    configs_ = std::make_shared<DungeonMapConfigs>();
 }
 
 DungeonMap::DungeonMap(std::shared_ptr<DungeonMap> other) {
     map_uuid_ = other->map_uuid_;
-    dungeon_configs = other->dungeon_configs;
-    configs_ = dungeon_configs;
+    configs_ = other->configs_;
     map_ = other->map_;
 }
 
