@@ -1,4 +1,4 @@
-## [unreleased]
+## [v0.2.4]
 ### Added
 - Added FastNoise <github.com/Auburns/FastNoise> (MIT License) as support library
 - Added the possibility to generate world maps
@@ -6,7 +6,7 @@
 
 ### Changed
 - Major Refactoring
-- MapBuilder now cannot be "chain called" in roder to build a map
+- MapBuilder now cannot be "chain called" in order to build a map
 
 ## [v0.2.3]
 ### Added

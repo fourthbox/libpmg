@@ -60,7 +60,7 @@ public:
      */
     std::vector<std::shared_ptr<Tile>> &GetMap() override { return map_; }
         
-private:
+protected:
     std::vector<std::shared_ptr<Tile>> map_;
     std::shared_ptr<WorldMapConfigs> configs_;
 

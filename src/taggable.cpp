@@ -37,7 +37,6 @@ void Taggable::AddTag(Tag_p tag) {
 
 bool Taggable::HasTag(Tag_p tag) {
     if (tags_.empty() || tags_.size() <= 0) {
-        
         return false;
     }
     

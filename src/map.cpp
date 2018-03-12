@@ -81,7 +81,7 @@ void Map::ResetLocationCosts() {
 }
 
 void Map::ResetPathFlags() {
-    for (auto const &tile : GetMap()) tile->is_explored = false;
+    for (auto const &tile : GetMap()) tile->is_explored_ = false;
 }
     
 }

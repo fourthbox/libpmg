@@ -8,6 +8,7 @@
 
 #include "map_builder.hpp"
 #include "world_map.hpp"
+#include "world_tile.hpp"
 
 namespace libpmg {
 
@@ -19,7 +20,7 @@ public:
     WorldBuilder();
     
     /**
-     Initializes every tile in the map. It must me called after generating the height map.
+     Initializes every tile in the map. It must me called before applying the height map.
      */
     void InitMap() override;
     
@@ -95,6 +96,11 @@ public:
      Generate the height map, using the parameters specified in the WorldConfigs.
      */
     void GenerateHeightMap();
+    
+    /**
+     Apply the height map on the tiles.
+     */
+    void ApplyHeightMap();
     
     /**
      Build the map and returns a pointer.

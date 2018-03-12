@@ -22,13 +22,9 @@ std::shared_ptr<Map> WorldBuilder::Build() {
 }
 
 void WorldBuilder::InitMap() {
-    if (height_map_ == nullptr) {
-        Utils::LogWarning("WorldBuilder::InitMap", "height_map_ has not been not been generated. Generating height map now...");
-        GenerateHeightMap();
-    }
         for (auto i {0}; i < map_->configs_->map_height_; i++) {
             for (auto j {0}; j < map_->configs_->map_width_; j++)
-                map_->map_.push_back(std::make_shared<Tile>(Tile (j, i)));
+                map_->map_.push_back(std::make_shared<Tile>(WorldTile (j, i)));
         }
 }
 
@@ -79,65 +75,75 @@ void WorldBuilder::GenerateHeightMap() {
         
         height_map_[i] = std::move(temp_height_map);
     }
+}
 
+void WorldBuilder::ApplyHeightMap() {
+    assert (height_map_ != nullptr);
+
+    for (auto i {0}; i < map_->configs_->map_height_; i++) {
+        for (auto j {0}; j < map_->configs_->map_width_; j++) {
+            auto tile = std::static_pointer_cast<WorldTile>(map_->GetTile(j, i));
+            tile->altitude_ = height_map_[i][j];
+        }
+    }
 }
 
 void WorldBuilder::ResetMap() {
     this->InitMap();
+    this->height_map_.reset();
 }
 
 void WorldBuilder::SetExtremeMultiplier(float extreme) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
     
     map_->configs_->extreme_multiplier_ = extreme;
 }
 
 void WorldBuilder::SetFractalGain(float gain) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     map_->configs_->fractal_gain_ = gain;
 }
 
 void WorldBuilder::SetFractalLacunarity(float lacunarity) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     map_->configs_->fractal_lacunarity_ = lacunarity;
 }
 
 void WorldBuilder::SetFractalOctaves(int octaves) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     map_->configs_->fractal_octaves_ = octaves;
 }
 
 void WorldBuilder::SetMapSize(std::size_t width, std::size_t height) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     map_->configs_->map_width_ = width;
     map_->configs_->map_height_ = height;
-    
 }
 
 void WorldBuilder::SetNoiseType(FastNoise::NoiseType type) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     map_->configs_->noise_type_ = type;
 }
 
 void WorldBuilder::SetNoiseFrequency(float frequency) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     map_->configs_->noise_frequency_ = frequency;
 }
 
 void WorldBuilder::SetPoleElevationMultiplier(float pole_elevation) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     map_->configs_->pole_elevation_multiplier_ = pole_elevation;
 }
 
 void WorldBuilder::SetSeaLevelMultiplier(float sea_level) {
-    assert (!map_->map_.empty());
+    assert (map_->map_.empty());
 
     map_->configs_->sea_level_multiplier_ = sea_level;
 }
