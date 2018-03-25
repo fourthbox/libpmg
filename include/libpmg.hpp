@@ -9,6 +9,7 @@
 #include "dungeon_builder.hpp"
 #include "world_builder.hpp"
 #include "rnd_manager.hpp"
+#include "utils.hpp"
 
 #endif /* LIBPMG_HPP_ */
 

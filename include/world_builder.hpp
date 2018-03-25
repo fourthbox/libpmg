@@ -106,10 +106,10 @@ public:
      Build the map and returns a pointer.
      @return A pointer to the built map.
      */
-    std::shared_ptr<Map> Build() override;
+    std::unique_ptr<Map> Build() override;
     
 private:
-    std::shared_ptr<WorldMap> map_;
+    std::unique_ptr<WorldMap> map_;
     std::unique_ptr<std::unique_ptr<float[]>[]> height_map_;
     
 };

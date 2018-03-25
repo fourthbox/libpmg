@@ -19,16 +19,16 @@ typedef std::shared_ptr<Tile> Tile_p;
 DungeonBuilder::DungeonBuilder()
 : default_path_algorithm_ {PathAlgorithm::ASTAR_BFS_MIX},
 allow_diagonal_corridors_ {true} {
-    map_ = std::make_shared<DungeonMap>();
+    map_ = std::make_unique<DungeonMap>();
 }
 
-std::shared_ptr<Map> DungeonBuilder::Build() {
+std::unique_ptr<Map> DungeonBuilder::Build() {
     if (map_->map_.empty()) {
         Utils::LogError("DungeonBuilder::Build", "Map has not been not initialized.\nAborting...");
         abort();
     }
         
-    return map_;
+    return std::move(map_);
 }
 
 void DungeonBuilder::SetDefaultPathAlgorithm(PathAlgorithm algorithm) {
@@ -56,7 +56,7 @@ void DungeonBuilder::SetMaxRooms(size_t rooms) {
     map_->configs_->rooms_ = rooms;
 }
 
-// Returns the Location from which come from coords
+// Returns the Location from which coords it come from
 Location_p from(Location_p coords, LocationMap_p came_from) {
     for (auto const &kv : *came_from) {
         if (kv.first == coords)
@@ -90,7 +90,7 @@ void DungeonBuilder::ConnectRooms(Room room1, Room room2) {
             path = Utils::BreadthFirstSearch(
                                              start->GetXY(),
                                              end->GetXY(),
-                                             map_,
+                                             map_.get(),
                                              IsDiagonalCorridor(),
                                              MoveDirections::FOUR_DIRECTIONAL);
             break;
@@ -98,14 +98,14 @@ void DungeonBuilder::ConnectRooms(Room room1, Room room2) {
             path = Utils::Dijkstra(
                                    start->GetXY(),
                                    end->GetXY(),
-                                   map_,
+                                   map_.get(),
                                    MoveDirections::FOUR_DIRECTIONAL);
             break;
         case PathAlgorithm::ASTAR:
             path = Utils::Astar(
                                 start->GetXY(),
                                 end->GetXY(),
-                                map_,
+                                map_.get(),
                                 MoveDirections::FOUR_DIRECTIONAL);
             break;
         case PathAlgorithm::ASTAR_BFS_MIX:
@@ -114,13 +114,13 @@ void DungeonBuilder::ConnectRooms(Room room1, Room room2) {
                 path = Utils::Astar(
                                     start->GetXY(),
                                     end->GetXY(),
-                                    map_,
+                                    map_.get(),
                                     MoveDirections::FOUR_DIRECTIONAL);
             else
                 path = Utils::BreadthFirstSearch(
                                                  start->GetXY(),
                                                  end->GetXY(),
-                                                 map_,
+                                                 map_.get(),
                                                  IsDiagonalCorridor(),
                                                  MoveDirections::FOUR_DIRECTIONAL);
             break;
@@ -136,12 +136,11 @@ void DungeonBuilder::ConnectRooms(Room room1, Room room2) {
     
     // Applies a cost to every tile in a room or a corridor, and to their neighbors, in order to
     // avoid corridors intersecating too much
-    auto wall_cost {kDefaultWallTileCost};
     for (auto const &tile : map_->map_){
         if (tile->Taggable::HasTag(TagManager::GetInstance().floor_tag_)) {
-            tile->cost_ = wall_cost;
+            tile->cost_ = kDefaultWallTileCost;
             for (auto const &nei : map_->GetNeighbors(tile, MoveDirections::EIGHT_DIRECTIONAL))
-                nei->cost_ = wall_cost;
+                nei->cost_ = kDefaultWallTileCost;
         }
     }
 }

@@ -6,7 +6,6 @@ namespace libpmg {
     
 typedef std::shared_ptr<Location> Location_p;
 typedef std::shared_ptr<std::unordered_map<Location_p, Location_p>> LocationMap_p;
-typedef std::shared_ptr<Map> Map_p;
 
 float heuristic(Location_p loc1, Location_p loc2) {
     int x1, y1, x2, y2;
@@ -17,7 +16,7 @@ float heuristic(Location_p loc1, Location_p loc2) {
 
 LocationMap_p Utils::Astar(std::pair<size_t, size_t> start_coor,
                            std::pair<size_t, size_t> end_coor,
-                           Map_p map,
+                           Map *map,
                            MoveDirections dir,
                            bool reset_path_flags) {
     if (reset_path_flags)
@@ -28,7 +27,7 @@ LocationMap_p Utils::Astar(std::pair<size_t, size_t> start_coor,
     
     PriorityQueue<Location_p, float> frontier;
     std::unordered_map<Location_p, float> cost_so_far;
-    auto came_from {std::make_unique<std::unordered_map<Location_p, Location_p>>()};
+    auto came_from {std::make_shared<std::unordered_map<Location_p, Location_p>>()};
     
     //Start point
     start_tile->is_explored_ = true;
@@ -59,7 +58,7 @@ LocationMap_p Utils::Astar(std::pair<size_t, size_t> start_coor,
 
 LocationMap_p Utils::Dijkstra(std::pair<size_t, size_t> start_coor,
                               std::pair<size_t, size_t> end_coor,
-                              Map_p map,
+                              Map *map,
                               MoveDirections dir,
                               bool reset_path_flags) {
     if (reset_path_flags)
@@ -70,7 +69,7 @@ LocationMap_p Utils::Dijkstra(std::pair<size_t, size_t> start_coor,
     
     PriorityQueue<Location_p, float> frontier;
     std::unordered_map<Location_p, float> cost_so_far;
-    auto came_from {std::make_unique<std::unordered_map<Location_p, Location_p>>()};
+    auto came_from {std::make_shared<std::unordered_map<Location_p, Location_p>>()};
     
     //Start point
     start_tile->is_explored_ = true;
@@ -100,7 +99,7 @@ LocationMap_p Utils::Dijkstra(std::pair<size_t, size_t> start_coor,
 
 LocationMap_p Utils::BreadthFirstSearch(std::pair<size_t, size_t> start_coor,
                                         std::pair<size_t, size_t> end_coor,
-                                        Map_p map,
+                                        Map *map,
                                         bool diagonals,
                                         MoveDirections dir,
                                         bool reset_path_flags) {
@@ -111,7 +110,7 @@ LocationMap_p Utils::BreadthFirstSearch(std::pair<size_t, size_t> start_coor,
     auto end_tile {map->GetTile(end_coor)};
     
     std::queue<Location_p> frontier;
-    auto came_from {std::make_unique<std::unordered_map<Location_p, Location_p>>()};
+    auto came_from {std::make_shared<std::unordered_map<Location_p, Location_p>>()};
     
     //Start point
     start_tile->is_explored_ = true;

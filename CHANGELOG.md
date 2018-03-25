@@ -1,3 +1,7 @@
+## [unreleased]
+### Changed
+- Changing the map return type to unique_ptr, because it's more flexible
+
 ## [v0.2.4]
 ### Added
 - Added FastNoise <github.com/Auburns/FastNoise> (MIT License) as support library

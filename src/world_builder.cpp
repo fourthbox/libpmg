@@ -8,17 +8,17 @@
 namespace libpmg {
     
 WorldBuilder::WorldBuilder() {
-    map_ = std::make_shared<WorldMap>();
+    map_ = std::make_unique<WorldMap>();
     height_map_ = nullptr;
 }
 
-std::shared_ptr<Map> WorldBuilder::Build() {
+std::unique_ptr<Map> WorldBuilder::Build() {
     if (map_->map_.empty()) {
         Utils::LogError("WorldBuilder::Build", "Map has not been not initialized.\nAborting...");
         abort();
     }
     
-    return map_;
+    return std::move(map_);
 }
 
 void WorldBuilder::InitMap() {

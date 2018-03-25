@@ -103,7 +103,7 @@ struct Utils {
     static std::shared_ptr<std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>>>
     BreadthFirstSearch(std::pair<std::size_t, std::size_t> start_coor,
                        std::pair<std::size_t, std::size_t> end_coor,
-                       std::shared_ptr<Map> map,
+                       Map *map,
                        bool diagonals,
                        MoveDirections dir,
                        bool reset_path_flags = true);
@@ -120,7 +120,7 @@ struct Utils {
     static std::shared_ptr<std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>>>
     Dijkstra(std::pair<std::size_t, std::size_t> start_coor,
              std::pair<std::size_t, std::size_t> end_coor,
-             std::shared_ptr<Map> map,
+             Map *map,
              MoveDirections dir,
              bool reset_path_flags = true);
     
@@ -136,7 +136,7 @@ struct Utils {
     static std::shared_ptr<std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>>>
     Astar(std::pair<std::size_t, std::size_t> start_coor,
           std::pair<std::size_t, std::size_t> end_coor,
-          std::shared_ptr<Map> map,
+          Map *map,
           MoveDirections dir,
           bool reset_path_flags = true);
     

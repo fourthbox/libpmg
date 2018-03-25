@@ -5,7 +5,6 @@
  @author pat <pat@fourthbox.com>
  */
 
-
 #ifndef LIBPMG_CONSTANTS_HPP_
 #define LIBPMG_CONSTANTS_HPP_
 

@@ -46,7 +46,7 @@ public:
      Initializes the DungeonMap copying another map
      @param other The map from which copy the parameters from
      */
-    DungeonMap(std::shared_ptr<DungeonMap> other);
+    DungeonMap(DungeonMap &other);
     
     /**
      Gets the configuration MapConfigs for this map.
