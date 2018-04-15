@@ -6,6 +6,11 @@ Tile::Tile (size_t x, size_t y, std::initializer_list<std::shared_ptr<Tag>> tags
 : Location (x, y),
 Taggable (tags)
 {}
+    
+Tile::Tile (size_t x, size_t y, std::vector<std::shared_ptr<Tag>> tags)
+: Location (x, y),
+Taggable (tags)
+{}
 
 char Tile::GetChar() {
     auto priority {0.0f};

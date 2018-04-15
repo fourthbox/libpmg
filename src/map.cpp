@@ -77,11 +77,11 @@ void Map::Print() {
     
 void Map::ResetLocationCosts() {
     for (auto const &tile : GetMap())
-        tile->cost_ = kDefaultEmptyTileCost;
+        tile->path_cost_ = kDefaultEmptyTileCost;
 }
 
 void Map::ResetPathFlags() {
-    for (auto const &tile : GetMap()) tile->is_explored_ = false;
+    for (auto const &tile : GetMap()) tile->is_path_explored_ = false;
 }
     
 }

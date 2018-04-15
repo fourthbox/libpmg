@@ -1,6 +1,7 @@
 ## [unreleased]
 ### Changed
 - Changing the map return type to unique_ptr, because it's more flexible
+- Minor refactoring
 
 ## [v0.2.4]
 ### Added

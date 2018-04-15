@@ -24,6 +24,8 @@ public:
     
     Taggable(std::shared_ptr<Tag> tag) : Taggable ({tag}) {}
     Taggable(std::initializer_list<std::shared_ptr<Tag>> tags) { AddTags(tags); }
+    Taggable(std::vector<std::shared_ptr<Tag>> tags) { AddTags(tags); }
+
     virtual ~Taggable() = 0;
     
     /**
@@ -37,6 +39,7 @@ public:
      @param tags A Tag list to to be added
      */
     void AddTags(std::initializer_list<std::shared_ptr<Tag>> tags);
+    void AddTags(std::vector<std::shared_ptr<Tag>> tags);
     
     /**
      Checks whether this object has the specified Tag.
@@ -70,6 +73,12 @@ public:
      @param to_remove A tag list to be removed
      */
     void UpdateTags(std::initializer_list<std::shared_ptr<Tag>> to_insert, std::initializer_list<std::shared_ptr<Tag>> to_remove = {});
+    
+    /**
+     Returns a reference to the tag vector
+     @return A reference to tags_
+     */
+    inline std::vector<std::shared_ptr<Tag>>& GetTagList() { return tags_; }
     
 protected:
     std::vector<std::shared_ptr<Tag>> tags_;    /**< The tags assigned to this object. */

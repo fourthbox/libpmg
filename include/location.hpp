@@ -19,8 +19,8 @@ public:
     Location(std::size_t x, std::size_t y);
     Location(std::pair<std::size_t, std::size_t> xy);
     
-    bool is_explored_;       /**< Whether the tile has been explored or not. Only used for by the path finder. */
-    float cost_;             /**< The cost used by the path finding algorithm */
+    bool is_path_explored_;       /**< Whether the tile has been explored or not. Only used for by the path finder. */
+    float path_cost_;             /**< The cost used by the path finding algorithm */
     
     inline std::size_t GetX() { return coords_.first; }
     inline std::size_t GetY() { return coords_.second; }

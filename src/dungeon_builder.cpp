@@ -138,9 +138,9 @@ void DungeonBuilder::ConnectRooms(Room room1, Room room2) {
     // avoid corridors intersecating too much
     for (auto const &tile : map_->map_){
         if (tile->Taggable::HasTag(TagManager::GetInstance().floor_tag_)) {
-            tile->cost_ = kDefaultWallTileCost;
+            tile->path_cost_ = kDefaultWallTileCost;
             for (auto const &nei : map_->GetNeighbors(tile, MoveDirections::EIGHT_DIRECTIONAL))
-                nei->cost_ = kDefaultWallTileCost;
+                nei->path_cost_ = kDefaultWallTileCost;
         }
     }
 }

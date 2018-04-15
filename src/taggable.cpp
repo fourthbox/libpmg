@@ -14,6 +14,10 @@ Taggable::~Taggable()
 void Taggable::AddTags(std::initializer_list<Tag_p> tags) {
     for (auto const &tag : tags) AddTag(tag);
 }
+    
+void Taggable::AddTags(std::vector<Tag_p> tags) {
+    for (auto const &tag : tags) AddTag(tag);
+}
 
 void Taggable::RemoveTags(std::initializer_list<Tag_p> tags) {
     for (auto const &tag : tags) RemoveTag(tag);

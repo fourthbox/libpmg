@@ -17,6 +17,8 @@ namespace libpmg {
 class Tile : public Location, public Taggable {
 public:
     Tile (std::size_t x, std::size_t y, std::initializer_list<std::shared_ptr<Tag>> tags = {libpmg::TagManager::GetInstance().wall_tag_});
+    Tile (std::size_t x, std::size_t y, std::vector<std::shared_ptr<Tag>> tags);
+
     ~Tile() override = default;
     
     /**
