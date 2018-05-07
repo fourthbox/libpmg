@@ -36,7 +36,7 @@ namespace libpmg {
         /**
          Attempts to add a Taggable reference to a Tag list.
          The same Tag list can't have multiple references to the same object.
-         @param taggable A reference to the Taggable object
+         @param taggable A pointer to the Taggable object
          @param tag The Tag list to add the Taggable to
          @return True if the Taggable was succesfully added, false otherwise
          */
@@ -44,7 +44,7 @@ namespace libpmg {
         
         /**
          Remove a specified Taggable object from a Tag list.
-         @param taggable A reference to the Taggable object
+         @param taggable A pointer to the Taggable object
          @param tag The Tag list from which the Taggable object is to be removed
          */
         void RemoveTaggable(Taggable *taggable, std::shared_ptr<Tag> tag);

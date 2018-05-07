@@ -36,6 +36,7 @@ public:
     
     /**
      Reset the map and re-initializes it.
+     @param keep_configs If true the new map will keep the same configs.
      */
     void ResetMap(bool keep_configs) override;
     
@@ -57,7 +58,7 @@ public:
     
     /**
      Place a single room in a map without checking for collisions.
-     @param room The room to place
+     @param room Pointer to the room to place
      */
     void PlaceRoom(Room *room);
     
@@ -102,7 +103,7 @@ public:
     void SetMapSize(std::size_t width, std::size_t height) override;
     
     /**
-     Set mac number of rooms to be generated.
+     Set max number of rooms to be generated.
      @param rooms Max number of room
      */
     void SetMaxRooms(std::size_t rooms);
@@ -165,7 +166,7 @@ private:
     /**
      Place a door if the tile is eligible.
      In order be aligible for a door a tile must be adjacent to no more then two wall tiles, and they must be opposite to eachother.x
-     @param tile The tile that will host the door
+     @param tile A pointer to the tile that will host the door
      */
     void PlaceDoor(Tile *tile);
     
