@@ -63,25 +63,25 @@ public:
      Gets the X coordinate.
      @return The X coordinate
      */
-    inline std::size_t GetX()          { return x_; }
+    inline std::size_t GetX() const          { return x_; }
     
     /**
      Gets the Y coordinate.
      @return The Y coordinate
      */
-    inline std::size_t GetY()          { return y_; }
+    inline std::size_t GetY() const          { return y_; }
     
     /**
      Gets the width coordinate.
      @return The width coordinate
      */
-    inline std::size_t GetWidth()      { return width_; }
+    inline std::size_t GetWidth() const      { return width_; }
     
     /**
      Gets the height coordinate.
      @return The height coordinate
      */
-    inline std::size_t GetHeight()     { return height_; }
+    inline std::size_t GetHeight() const     { return height_; }
     
     /**
      Checks whether the specified coordiantes are inside of the Rect.

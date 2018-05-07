@@ -44,7 +44,7 @@ class WorldMap : public Map {
     friend class WorldBuilder;
 
 public:
-    WorldMap();
+    WorldMap() {}
     WorldMap(std::shared_ptr<WorldMap> other);
     ~WorldMap() {}
     
@@ -52,16 +52,16 @@ public:
      Gets the configuration MapConfigs for this map.
      @return A pointer to the configuration MapConfigs for this map.
      */
-    std::shared_ptr<MapConfigs> GetConfigs() override { return configs_; }
-    
+    std::shared_ptr<MapConfigs> GetConfigs() override { return std::static_pointer_cast<MapConfigs> (configs_); }
+
     /**
      Gets the map.
      @return A vector containing all the Tile in this map
      */
-    std::vector<std::shared_ptr<Tile>> &GetMap() override { return map_; }
+    std::vector<Tile*> &GetMap() override { return map_; }
         
 protected:
-    std::vector<std::shared_ptr<Tile>> map_;
+    std::vector<Tile*> map_;
     std::shared_ptr<WorldMapConfigs> configs_;
 
 };

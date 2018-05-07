@@ -43,14 +43,14 @@ public:
      @param y The Y coordinate
      @return A pointer to the tile
      */
-    std::shared_ptr<Tile> GetTile(std::size_t x, std::size_t y);
+    Tile *GetTile(std::size_t x, std::size_t y);
     
     /**
      Get a tile in a specified location.
      @param xy A pair containing the coordinates
      @return A pointer to the tile
      */
-    std::shared_ptr<Tile> GetTile(std::pair<std::size_t, std::size_t> xy);
+    Tile *GetTile(std::pair<std::size_t, std::size_t> xy);
     
     /**
      Gets the tiles adjacent to the selected tile.
@@ -58,7 +58,7 @@ public:
      @param dir Whether getting only tiles adjacent on cardinal directions, or diagonal tiles
      @return A vector of pointers to the neighbor tiles
      */
-    std::vector<std::shared_ptr<Location>> GetNeighbors(std::shared_ptr<Location> location, MoveDirections dir = MoveDirections::FOUR_DIRECTIONAL) override;
+    std::vector<Location*> GetNeighbors(Location *location, MoveDirections const &dir = MoveDirections::FOUR_DIRECTIONAL) override;
     
     /**
      Get the map size.
@@ -89,7 +89,7 @@ protected:
      Gets the map.
      @return A vector containing all the Tile in this map
      */
-    virtual std::vector<std::shared_ptr<Tile>> &GetMap() = 0;
+    virtual std::vector<Tile*> &GetMap() = 0;
     
     /**
      Checks whether the specified coordinates are inside of the map.
@@ -104,7 +104,7 @@ protected:
      @param tile A pointer to the tile to check
      @return True if the tile is inside the map, false otherwise.
      */
-    inline bool BoundsCheck(std::shared_ptr<Tile> tile) { return BoundsCheck(tile->GetX(), tile->GetY()); }
+    constexpr bool BoundsCheck(Tile const &tile) { return BoundsCheck(tile.GetX(), tile.GetY()); }
 
 };
     

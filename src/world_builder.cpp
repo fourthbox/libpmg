@@ -8,24 +8,24 @@
 namespace libpmg {
     
 WorldBuilder::WorldBuilder() {
-    map_ = std::make_unique<WorldMap>();
+    map_ = std::make_shared<WorldMap>();
     height_map_ = nullptr;
 }
 
-std::unique_ptr<Map> WorldBuilder::Build() {
+std::shared_ptr<Map> WorldBuilder::Build() {
     if (map_->map_.empty()) {
         Utils::LogError("WorldBuilder::Build", "Map has not been not initialized.\nAborting...");
         abort();
     }
     
-    return std::move(map_);
+    return std::static_pointer_cast<Map>(map_);
 }
 
 void WorldBuilder::InitMap() {
-        for (auto i {0}; i < map_->configs_->map_height_; i++) {
-            for (auto j {0}; j < map_->configs_->map_width_; j++)
-                map_->map_.push_back(std::make_shared<Tile>(WorldTile (j, i)));
-        }
+    for (auto i {0}; i < map_->configs_->map_height_; i++) {
+        for (auto j {0}; j < map_->configs_->map_width_; j++)
+                map_->map_.push_back (new WorldTile (j, i));
+    }
 }
 
 void WorldBuilder::GenerateHeightMap() {
@@ -82,14 +82,15 @@ void WorldBuilder::ApplyHeightMap() {
 
     for (auto i {0}; i < map_->configs_->map_height_; i++) {
         for (auto j {0}; j < map_->configs_->map_width_; j++) {
-            auto tile = std::static_pointer_cast<WorldTile>(map_->GetTile(j, i));
+            auto tile = (WorldTile*)map_->GetTile(j, i);
             tile->altitude_ = height_map_[i][j];
         }
     }
 }
 
-void WorldBuilder::ResetMap() {
+void WorldBuilder::ResetMap(bool keep_configs) {
     this->InitMap();
+    // keep configs
     this->height_map_.reset();
 }
 

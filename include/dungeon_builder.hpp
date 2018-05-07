@@ -37,7 +37,7 @@ public:
     /**
      Reset the map and re-initializes it.
      */
-    void ResetMap() override;
+    void ResetMap(bool keep_configs) override;
     
     /**
      Generate a random number of rooms and digs them in the map.
@@ -59,7 +59,7 @@ public:
      Place a single room in a map without checking for collisions.
      @param room The room to place
      */
-    void PlaceRoom(Room room);
+    void PlaceRoom(Room *room);
     
     /**
      Set the max room size into the configs.
@@ -86,7 +86,7 @@ public:
      Corridors try not to collide with rooms and other corridors. You can specify which algorithm will be used to connect rooms with eachother.
      @param algorithm The algorithm used
      */
-    void SetDefaultPathAlgorithm(PathAlgorithm algorithm);
+    void SetDefaultPathAlgorithm(PathAlgorithm const &algorithm);
     
     /**
      Set wether diagonal corridors are allowed
@@ -111,10 +111,10 @@ public:
      Build the map and returns a pointer.
      @return A pointer to the built map.
      */
-    std::unique_ptr<Map> Build() override;
-    
+    std::shared_ptr<Map> Build() override;
+        
 private:
-    std::unique_ptr<DungeonMap> map_;       /**< The map. */
+    std::shared_ptr<DungeonMap> map_;       /**< The map. */
     PathAlgorithm default_path_algorithm_;  /**< The default path finder algorithm used for generating corridors. */
     bool allow_diagonal_corridors_;         /**< Should the builder generate diagonal corridors? */
     
@@ -123,14 +123,14 @@ private:
      @param room1 The first room
      @param room2 The second room
      */
-    void ConnectRooms(Room room1, Room room2);
+    void ConnectRooms(Room const &room1, Room const &room2);
     
     /**
      Add the specified tag to all the tiles in the specified Rect.
      @param rect The rect
      @param tag The tag to add
      */
-    void PlaceRect(Rect rect,
+    void PlaceRect(Rect const &rect,
                    std::initializer_list<std::shared_ptr<Tag>> tag);
     
     /**
@@ -138,7 +138,7 @@ private:
      @param rect The rect
      @param tag The tag to remove
      */
-    void RemoveRect(Rect rect,
+    void RemoveRect(Rect const &rect,
                     std::initializer_list<std::shared_ptr<Tag>> tag);
     
     /**
@@ -149,7 +149,7 @@ private:
      @param white_list The list of tiles that can stay in the rect, even if they have multiple blacklisted tags
      @return True if the Rect can be placed, false otherwise
      */
-    bool CanPlaceRect(Rect rect,
+    bool CanPlaceRect(Rect const &rect,
                       std::initializer_list<std::shared_ptr<Tag>> black_list,
                       std::initializer_list<std::shared_ptr<Tag>> white_list = {});
     /**
@@ -158,7 +158,7 @@ private:
      @param to_insert Tags that will be added to the tiles
      @param to_remove Tags that will be removed form the tiles
      */
-    void UpdateRect(Rect rect,
+    void UpdateRect(Rect const &rect,
                     std::initializer_list<std::shared_ptr<Tag>> to_insert,
                     std::initializer_list<std::shared_ptr<Tag>> to_remove);
     
@@ -167,7 +167,7 @@ private:
      In order be aligible for a door a tile must be adjacent to no more then two wall tiles, and they must be opposite to eachother.x
      @param tile The tile that will host the door
      */
-    void PlaceDoor(std::shared_ptr<Tile> tile);
+    void PlaceDoor(Tile *tile);
     
     /**
      Check if the corridor to be placed should be diagonal.

@@ -4,9 +4,6 @@
 #include "utils.hpp"
 
 namespace libpmg {
-
-typedef std::shared_ptr<Location> Location_p;
-typedef std::shared_ptr<Tile> Tile_p;
     
 Map::Map() {
     map_uuid_ = Utils::GenerateUUID();
@@ -16,10 +13,10 @@ std::pair<size_t, size_t> Map::GetMapSize() {
     return std::make_pair(GetConfigs()->map_width_, GetConfigs()->map_height_);
 }
 
-std::vector<Location_p> Map::GetNeighbors(Location_p location, MoveDirections dir) {
+std::vector<Location*> Map::GetNeighbors(Location *location, MoveDirections const &dir) {
     size_t x, y;
     std::tie(x, y) = location->GetXY();
-    std::vector<Location_p> vec;
+    std::vector<Location*> vec;
     
     if (auto tile {GetTile(x, y-1)}; tile != nullptr)
         vec.push_back(tile);
@@ -45,20 +42,18 @@ std::vector<Location_p> Map::GetNeighbors(Location_p location, MoveDirections di
     return vec;
 }
 
-Tile_p Map::GetTile(std::pair<size_t, size_t> xy) {
+Tile *Map::GetTile(std::pair<size_t, size_t> xy) {
     size_t x, y;
     std::tie(x, y) = xy;
     
     return GetTile (x, y);
 }
 
-Tile_p Map::GetTile(size_t x, size_t y) {
+Tile *Map::GetTile(size_t x, size_t y) {
     if (!BoundsCheck(x, y))
         return nullptr;
-    
-    auto t {GetMap()[y * GetConfigs()->map_width_ + x]};
-    
-    return t;
+        
+    return GetMap()[y * GetConfigs()->map_width_ + x];
 }
 
 void Map::Print() {

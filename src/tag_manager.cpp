@@ -16,17 +16,17 @@ TagManager::TagManager() {
     explored_tag_ = std::make_shared<Tag>(Tag(kDefaultEmptyChar, kDefaultEmptyDrawPriority, "explored"));
 }
 
-void TagManager::RemoveTaggable(libpmg::Taggable &taggable, Tag_p tag) {
+void TagManager::RemoveTaggable(libpmg::Taggable *taggable, Tag_p tag) {
     tag_map_[tag].erase(
-            std::remove(tag_map_[tag].begin(), tag_map_[tag].end(), &taggable),
+            std::remove(tag_map_[tag].begin(), tag_map_[tag].end(), taggable),
             tag_map_[tag].end());
 }
 
-bool TagManager::TryAddTaggable(libpmg::Taggable &taggable, Tag_p tag) {
-    if(std::find(tag_map_[tag].begin(), tag_map_[tag].end(), &taggable) != tag_map_[tag].end())
+bool TagManager::TryAddTaggable(libpmg::Taggable *taggable, Tag_p tag) {
+    if(std::find(tag_map_[tag].begin(), tag_map_[tag].end(), taggable) != tag_map_[tag].end())
         return false;
 
-    tag_map_[tag].push_back(&taggable);
+    tag_map_[tag].push_back(taggable);
 
     return true;
 }

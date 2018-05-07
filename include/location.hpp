@@ -22,9 +22,9 @@ public:
     bool is_path_explored_;       /**< Whether the tile has been explored or not. Only used for by the path finder. */
     float path_cost_;             /**< The cost used by the path finding algorithm */
     
-    inline std::size_t GetX() { return coords_.first; }
-    inline std::size_t GetY() { return coords_.second; }
-    inline std::pair<std::size_t, std::size_t> GetXY() { return coords_; }
+    inline std::size_t GetX() const { return coords_.first; }
+    inline std::size_t GetY() const { return coords_.second; }
+    inline std::pair<std::size_t, std::size_t> GetXY() const { return coords_; }
     
 protected:
     std::pair<std::size_t, std::size_t> coords_;    /**< The coordinates held by this class */

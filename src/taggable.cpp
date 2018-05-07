@@ -36,7 +36,7 @@ void Taggable::AddTag(Tag_p tag) {
         return;
     
     tags_.push_back(tag);
-    libpmg::TagManager::GetInstance().TryAddTaggable(*this, tag);
+    libpmg::TagManager::GetInstance().TryAddTaggable(this, tag);
 }
 
 bool Taggable::HasTag(Tag_p tag) {
@@ -68,7 +68,7 @@ void Taggable::RemoveTag(Tag_p tag) {
                             tags_.end(),
                             tag),
                 tags_.end());
-    libpmg::TagManager::GetInstance().RemoveTaggable(*this, tag);
+    libpmg::TagManager::GetInstance().RemoveTaggable(this, tag);
 }
 
 }

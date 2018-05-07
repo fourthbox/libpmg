@@ -100,12 +100,12 @@ struct Utils {
      @param reset_path_flags Whether path flags should be reset before running the algorithm
      @return An unordered map of locations. The key is the location "connected" to the value on the generated path
      */
-    static std::shared_ptr<std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>>>
+    static std::shared_ptr<std::unordered_map<Location*, Location*>>
     BreadthFirstSearch(std::pair<std::size_t, std::size_t> start_coor,
                        std::pair<std::size_t, std::size_t> end_coor,
                        Map *map,
                        bool diagonals,
-                       MoveDirections dir,
+                       MoveDirections const &dir,
                        bool reset_path_flags = true);
     
     /**
@@ -117,11 +117,11 @@ struct Utils {
      @param reset_path_flags Whether path flags should be reset before running the algorithm
      @return An unordered map of locations. The key is the location "connected" to the value on the generated path
      */
-    static std::shared_ptr<std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>>>
+    static std::shared_ptr<std::unordered_map<Location*, Location*>>
     Dijkstra(std::pair<std::size_t, std::size_t> start_coor,
              std::pair<std::size_t, std::size_t> end_coor,
              Map *map,
-             MoveDirections dir,
+             MoveDirections const &dir,
              bool reset_path_flags = true);
     
     /**
@@ -133,11 +133,11 @@ struct Utils {
      @param reset_path_flags Whether path flags should be reset before running the algorithm
      @return An unordered map of locations. The key is the location "connected" to the value on the generated path
      */
-    static std::shared_ptr<std::unordered_map<std::shared_ptr<Location>, std::shared_ptr<Location>>>
+    static std::shared_ptr<std::unordered_map<Location*, Location*>>
     Astar(std::pair<std::size_t, std::size_t> start_coor,
           std::pair<std::size_t, std::size_t> end_coor,
           Map *map,
-          MoveDirections dir,
+          MoveDirections const &dir,
           bool reset_path_flags = true);
     
     /**

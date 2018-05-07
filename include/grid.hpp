@@ -32,7 +32,7 @@ public:
      @param dir Whether getting only tiles adjacent on cardinal directions, or diagonal tiles
      @return A vector of pointers to the neighbor tiles
      */
-    virtual std::vector<std::shared_ptr<Location>> GetNeighbors(std::shared_ptr<Location> location, MoveDirections dir) = 0;
+    virtual std::vector<Location*> GetNeighbors(Location *location, MoveDirections const &dir) = 0;
     
     /**
      Resets all the costs calculated by the path finding algorithm.

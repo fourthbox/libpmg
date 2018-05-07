@@ -40,14 +40,14 @@ namespace libpmg {
          @param tag The Tag list to add the Taggable to
          @return True if the Taggable was succesfully added, false otherwise
          */
-        bool TryAddTaggable(Taggable &taggable, std::shared_ptr<Tag> tag);
+        bool TryAddTaggable(Taggable *taggable, std::shared_ptr<Tag> tag);
         
         /**
          Remove a specified Taggable object from a Tag list.
          @param taggable A reference to the Taggable object
          @param tag The Tag list from which the Taggable object is to be removed
          */
-        void RemoveTaggable(Taggable &taggable, std::shared_ptr<Tag> tag);
+        void RemoveTaggable(Taggable *taggable, std::shared_ptr<Tag> tag);
         
         std::shared_ptr<Tag> floor_tag_;     /**< A tag indicating the tile has a floor */
         std::shared_ptr<Tag> wall_tag_;      /**< A tag indicating the tile has a wall */

@@ -46,30 +46,36 @@ public:
      Initializes the DungeonMap copying another map
      @param other The map from which copy the parameters from
      */
-    DungeonMap(DungeonMap &other);
+    DungeonMap(DungeonMap const &other);
+    
+    /**
+     Initializes the DungeonMap and setup new configs
+     @param configs The config file to copy
+     */
+    DungeonMap(std::shared_ptr<MapConfigs> configs);
     
     /**
      Gets the configuration MapConfigs for this map.
      @return A pointer to the configuration MapConfigs for this map.
      */
-    std::shared_ptr<MapConfigs> GetConfigs() override { return configs_; }
+    std::shared_ptr<MapConfigs> GetConfigs() override { return std::static_pointer_cast<MapConfigs> (configs_); }
     
     /**
      Gets the map.
      @return A vector containing all the Tile in this map
      */
-    std::vector<std::shared_ptr<Tile>> &GetMap() override { return map_; }
+    std::vector<Tile*> &GetMap() override { return map_; }
 
     /**
      Gets a reference to the room list of this map.
      @return A reference to room_list_
      */
-    inline std::vector<Room> &GetRoomList() { return room_list_; }
+    constexpr std::vector<Room*> &GetRoomList() { return room_list_; }
     
 protected:
-    std::vector<std::shared_ptr<Tile>> map_;        /**< All the tiles for this current map */
+    std::vector<Tile*> map_;        /**< All the tiles for this current map */
     std::shared_ptr<DungeonMapConfigs> configs_;    /**< Pointer to the DungeonMapConfigs used to generate this map */
-    std::vector<Room> room_list_;                   /**< A list holding all informations of original generated rooms */
+    std::vector<Room*> room_list_;                   /**< A list holding all informations of original generated rooms */
     
 };
     

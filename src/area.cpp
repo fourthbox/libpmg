@@ -4,7 +4,7 @@
 
 namespace libpmg {
     
-std::pair<size_t, size_t> Area::GetRndCoords() {
+std::pair<size_t, size_t> Area::GetRndCoords() const {
     return std::make_pair (
                            RndManager::GetInstance().GetRandomUintFromRange(
                                                                             (int)rect_.GetX(),

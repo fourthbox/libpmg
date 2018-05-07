@@ -26,7 +26,7 @@ public:
     /**
      Reset the map and re-initializes it.
      */
-    virtual void ResetMap() = 0;
+    virtual void ResetMap(bool keep_configs) = 0;
     
     /**
      Set the size of the map.
@@ -39,7 +39,7 @@ public:
      Build the map and returns a pointer.
      @return A pointer to the built map.
      */
-    virtual std::unique_ptr<Map> Build() = 0;
+    virtual std::shared_ptr<Map> Build() = 0;
     
 };
 
