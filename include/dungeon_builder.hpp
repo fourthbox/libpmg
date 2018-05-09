@@ -57,6 +57,20 @@ public:
     void GenerateDoors();
     
     /**
+     Generate a variable number of up and down doors, embedded into walls.
+     @param up Number of stairs up.
+     @param down Number of staris down.
+     */
+    void GenerateWallStairs(size_t up, size_t down);
+    
+    /**
+     Generate a variable number of up and down stairs, dig into the ground.
+     @param up Number of stairs up.
+     @param down Number of staris down.
+     */
+    void GenerateGroundStairs(size_t up, size_t down);
+    
+    /**
      Place a single room in a map without checking for collisions.
      @param room Pointer to the room to place
      */
@@ -165,10 +179,19 @@ private:
     
     /**
      Place a door if the tile is eligible.
-     In order be aligible for a door a tile must be adjacent to no more then two wall tiles, and they must be opposite to eachother.x
+     In order be eligible for a door a tile must be adjacent to no more then two wall tiles, and they must be opposite to eachother.x
      @param tile A pointer to the tile that will host the door
      */
     void PlaceDoor(Tile *tile);
+    
+    /**
+     Place a stair tile, if eligible.
+     In order to be eligible for stairs, a tile must have at least 3 adjacent tiles (in four cardinal directions)
+     @param tile A pointer to the tile that will host the stair
+     @param is_upstairs If set to true, the stair will be upstairs. It will be downstairs otherwise.
+     @return True if the stair were succesfully placed, false otherwise.
+     */
+    bool PlaceStairs(Tile *tile, bool is_upstairs);
     
     /**
      Check if the corridor to be placed should be diagonal.

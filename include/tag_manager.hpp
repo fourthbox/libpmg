@@ -53,6 +53,8 @@ namespace libpmg {
         std::shared_ptr<Tag> wall_tag_;      /**< A tag indicating the tile has a wall */
         std::shared_ptr<Tag> door_tag_;      /**< A tag indicating the tile has a door */
         std::shared_ptr<Tag> explored_tag_;  /**< A tag indicating the tile is explored */
+        std::shared_ptr<Tag> upstairs_tag_;    /**< A tag indicating the tile is an upstair */
+        std::shared_ptr<Tag> downstairs_tag_;    /**< A tag indicating the tile is a downstair */
         
     private:
         TagManager();

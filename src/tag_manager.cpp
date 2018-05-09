@@ -14,6 +14,8 @@ TagManager::TagManager() {
     wall_tag_ = std::make_shared<Tag>(Tag(kDefaultWallChar, kDefaultWallDrawPriority, "wall"));
     door_tag_ = std::make_shared<Tag>(Tag(kDefaultDoorChar, kDefaultDoorDrawPriority, "door"));
     explored_tag_ = std::make_shared<Tag>(Tag(kDefaultEmptyChar, kDefaultEmptyDrawPriority, "explored"));
+    upstairs_tag_ = std::make_shared<Tag>(Tag(kDefaultUpstairChar, kDefaultStairDrawPriority, "upstarirs"));
+    downstairs_tag_ = std::make_shared<Tag>(Tag(kDefaultDoorChar, kDefaultStairDrawPriority, "downstarirs"));
 }
 
 void TagManager::RemoveTaggable(libpmg::Taggable *taggable, Tag_p tag) {

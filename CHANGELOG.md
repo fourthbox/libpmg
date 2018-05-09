@@ -1,4 +1,7 @@
-## [unreleased]
+## [v0.3.0]
+### Added
+- Added function to generate stairs in the dungeon.
+
 ### Changed
 - Smart pointers were being overused. Changed pointer/reference policy.
 - Major refactoring

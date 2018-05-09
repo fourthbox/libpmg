@@ -38,7 +38,7 @@ LocationMap_p Utils::Astar(std::pair<size_t, size_t> start_coor,
         auto current {frontier.pop()};
         
         for (auto const &nei : map->GetNeighbors(current, dir)) {
-            if (map->GetTile(nei->GetXY())->is_path_explored_ == false) {
+            if (nei->is_path_explored_ == false) {
                 auto new_cost {cost_so_far[current] + nei->path_cost_};
                 if (!cost_so_far.count(nei) || new_cost < cost_so_far[nei]) {
                     cost_so_far[nei] = new_cost;
@@ -48,7 +48,7 @@ LocationMap_p Utils::Astar(std::pair<size_t, size_t> start_coor,
 
                     frontier.push(nei, priority);
                     (*came_from)[nei] = current;
-                    map->GetTile(nei->GetXY())->is_path_explored_ = true;
+                    nei->is_path_explored_ = true;
                 }
                 
                 if ((Location*)map->GetTile(nei->GetXY()) == end_tile)
@@ -83,13 +83,13 @@ LocationMap_p Utils::Dijkstra(std::pair<size_t, size_t> start_coor,
         auto current {frontier.pop()};
         
         for (auto const &nei : map->GetNeighbors(current, dir)) {
-            if (map->GetTile(nei->GetXY())->is_path_explored_ == false) {
+            if (nei->is_path_explored_ == false) {
                 auto new_cost {cost_so_far[current] + nei->path_cost_};
                 if (!cost_so_far.count(nei) || new_cost < cost_so_far[nei]) {
                     cost_so_far[nei] = new_cost;
                     frontier.push(nei, new_cost);
                     (*came_from)[nei] = current;
-                    map->GetTile(nei->GetXY())->is_path_explored_ = true;
+                    nei->is_path_explored_ = true;
                 }
                 
                 if ((Location*)map->GetTile(nei->GetXY()) == end_tile)
@@ -128,10 +128,10 @@ LocationMap_p Utils::BreadthFirstSearch(std::pair<size_t, size_t> start_coor,
             std::reverse(neis.begin(), neis.end());
         
         for (auto const &nei : neis) {
-            if (map->GetTile(nei->GetXY())->is_path_explored_ == false) {
+            if (nei->is_path_explored_ == false) {
                 frontier.push(nei);
                 (*came_from)[nei] = current;
-                map->GetTile(nei->GetXY())->is_path_explored_ = true;
+                nei->is_path_explored_ = true;
             }
             
             if ((Location*)map->GetTile(nei->GetXY()) == end_tile)

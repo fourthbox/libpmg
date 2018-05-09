@@ -212,11 +212,11 @@ void DungeonBuilder::PlaceDoor(Tile *tile) {
     auto wall_count {0};
     for (auto const &nei : neis) {
         // If one neighbour has a door, exit
-        if (map_->GetTile(nei->GetXY())->HasTag(TagManager::GetInstance().door_tag_))
+        if (nei->HasTag(TagManager::GetInstance().door_tag_))
             return;
         
         // Count how many neighbours has walls
-        if (map_->GetTile(nei->GetXY())->HasTag(TagManager::GetInstance().wall_tag_))
+        if (nei->HasTag(TagManager::GetInstance().wall_tag_))
             wall_count++;
     }
     
@@ -231,34 +231,125 @@ void DungeonBuilder::PlaceDoor(Tile *tile) {
             && map_->GetTile(tile->GetX()+1, tile->GetY())->HasTag(TagManager::GetInstance().wall_tag_)))
         tile->AddTag(TagManager::GetInstance().door_tag_);
 }
+    
+bool DungeonBuilder::PlaceStairs(Tile *tile, bool is_upstairs) {
+    assert (tile != nullptr);
+    
+    // Door and floor tiles are not eligible
+    if (tile->HasTag(TagManager::GetInstance().door_tag_) || !tile->HasTag(TagManager::GetInstance().wall_tag_))
+        return false;
+    
+    //    Get the four neighbours
+    auto neis {map_->GetNeighbors(tile, MoveDirections::FOUR_DIRECTIONAL)};
+    
+    // Discard any near the border location
+    if (neis.size() != 4)
+        return false;
+        
+    auto wall_count {0};
+    for (auto const &nei : neis) {
+        
+        // Neighboring tiles cannot have stairs
+        if (nei->HasTag(TagManager::GetInstance().upstairs_tag_) || nei->HasTag(TagManager::GetInstance().downstairs_tag_))
+            return false;
+            
+        // Count how many neighbours has walls
+        if (nei->HasTag(TagManager::GetInstance().wall_tag_))
+            wall_count++;
+    }
+    
+    // Wall embedded staris can only be placed into tiles adjacent to 3 walls, four directionally
+    if (wall_count == 3) {
+        if (is_upstairs)
+            tile->UpdateTags({TagManager::GetInstance().upstairs_tag_}, {TagManager::GetInstance().wall_tag_});
+        else
+            tile->UpdateTags({TagManager::GetInstance().downstairs_tag_}, {TagManager::GetInstance().wall_tag_});
+
+        return true;
+    }
+    
+    return false;
+}
 
 void DungeonBuilder::GenerateDoors() {
     if (map_->room_list_.empty() || map_->map_.empty()) {
-        Utils::LogWarning("DungeonBuilder::placeCorridors", "There are no rooms, or no free space. Skipping door generation...");
+        Utils::LogWarning("DungeonBuilder::GenerateDoors", "There are no rooms, or no free space. Skipping door generation...");
         return;
     }
     
+    // Scan the borders fo the rooms form tiles eligible for doors
     for (auto const &room : map_->room_list_) {
-        auto *rect {&room->Area::GetRect()};
-        ++(*rect);
-        
-        for (auto w {0}; w < (room->Area::GetRect()).GetWidth(); w++) {
-            auto tile {map_->GetTile((room->Area::GetRect()).GetX() + w, (room->Area::GetRect()).GetY())};
+        Rect rect {room->Area::GetRect()};
+        rect++;
+
+        for (auto w {0}; w < rect.GetWidth(); w++) {
+            auto tile {map_->GetTile(rect.GetX() + w, rect.GetY())};
             PlaceDoor(tile);
             
-            tile = map_->GetTile((room->Area::GetRect()).GetX() + w, (room->Area::GetRect()).GetY() + (room->Area::GetRect()).GetHeight()-1);
+            tile = map_->GetTile(rect.GetX() + w, rect.GetY() + rect.GetHeight()-1);
             PlaceDoor(tile);
         }
         
-        for (auto h {0}; h < (room->Area::GetRect()).GetHeight(); h++) {
-            auto tile {map_->GetTile((room->Area::GetRect()).GetX(), (room->Area::GetRect()).GetY() + h)};
+        for (auto h {0}; h < rect.GetHeight(); h++) {
+            auto tile {map_->GetTile(rect.GetX(), rect.GetY() + h)};
             PlaceDoor(tile);
             
-            tile = map_->GetTile((room->Area::GetRect()).GetX() + (room->Area::GetRect()).GetWidth()-1, (room->Area::GetRect()).GetY() + h);
+            tile = map_->GetTile(rect.GetX() + rect.GetWidth()-1, rect.GetY() + h);
             PlaceDoor(tile);
         }
+    }
+}
+    
+void DungeonBuilder::GenerateWallStairs(size_t up, size_t down) {
+    if (map_->room_list_.empty() || map_->map_.empty()) {
+        Utils::LogWarning("DungeonBuilder::GenerateWallStairs", "There are no rooms, or no free space. Skipping door generation...");
+        return;
+    }
+    
+    std::vector<Tile*> eligeble_tiles;
+
+    // Scan the borders fo the rooms form tiles eligible for stairs
+    for (auto const &room : map_->room_list_) {
+        Rect rect {room->Area::GetRect()};
+        rect++;
+
+        for (auto w {0}; w < rect.GetWidth(); w++) {
+            eligeble_tiles.push_back(map_->GetTile(rect.GetX() + w, rect.GetY()));
+
+            eligeble_tiles.push_back(map_->GetTile(rect.GetX() + w, rect.GetY() + rect.GetHeight()-1));
+        }
         
-        --(*rect);
+        for (auto h {0}; h < rect.GetHeight(); h++) {
+            eligeble_tiles.push_back(map_->GetTile(rect.GetX(), rect.GetY() + h));
+
+            eligeble_tiles.push_back(map_->GetTile(rect.GetX() + rect.GetWidth()-1, rect.GetY() + h));
+        }
+    }
+    
+    // Shuffle the vector
+    std::shuffle(std::begin(eligeble_tiles), std::begin(eligeble_tiles), *RndManager::GetInstance().GetGenerator());
+    
+    
+    // TODO:
+//    remove stares from angles.
+    
+    for (auto const &tile : eligeble_tiles) {
+        PlaceStairs(tile, true);
+    }
+}
+    
+void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down) {
+    if (map_->room_list_.empty() || map_->map_.empty()) {
+        Utils::LogWarning("DungeonBuilder::GenerateGroundStairs", "There are no rooms, or no free space. Skipping door generation...");
+        return;
+    }
+    
+    std::vector<Tile*> eligeble_tiles;
+    
+//    std::shuffle(eligeble_tiles.front(), eligeble_tiles.back(), *RndManager::GetInstance().GetGenerator());
+    
+    for (auto const &tile : eligeble_tiles) {
+//        tile->UpdateTags({TagManager::GetInstance().stairs_tag_}, {TagManager::GetInstance().wall_tag_});
     }
 }
 

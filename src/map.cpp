@@ -36,7 +36,34 @@ std::vector<Location*> Map::GetNeighbors(Location *location, MoveDirections cons
             vec.push_back(tile);
         if (auto tile {GetTile(x+1, y-1)}; tile != nullptr)
             vec.push_back(tile);
-        
+    }
+    
+    return vec;
+}
+    
+std::vector<Tile*> Map::GetNeighbors(Tile *location, MoveDirections const &dir) {
+    size_t x, y;
+    std::tie(x, y) = location->GetXY();
+    std::vector<Tile*> vec;
+    
+    if (auto tile {GetTile(x, y-1)}; tile != nullptr)
+        vec.push_back(tile);
+    if (auto tile {GetTile(x+1, y)}; tile != nullptr)
+        vec.push_back(tile);
+    if (auto tile {GetTile(x, y+1)}; tile != nullptr)
+        vec.push_back(tile);
+    if (auto tile {GetTile(x-1, y)}; tile != nullptr)
+        vec.push_back(tile);
+    
+    if (dir == MoveDirections::EIGHT_DIRECTIONAL) {
+        if (auto tile {GetTile(x-1, y-1)}; tile != nullptr)
+            vec.push_back(tile);
+        if (auto tile {GetTile(x+1, y+1)}; tile != nullptr)
+            vec.push_back(tile);
+        if (auto tile {GetTile(x-1, y+1)}; tile != nullptr)
+            vec.push_back(tile);
+        if (auto tile {GetTile(x+1, y-1)}; tile != nullptr)
+            vec.push_back(tile);
     }
     
     return vec;

@@ -17,9 +17,13 @@ static const float kDefaultWallTileCost             {666.0f};
 static const char kDefaultEmptyChar                 {'.'};
 static const char kDefaultWallChar                  {'#'};
 static const char kDefaultDoorChar                  {'+'};
+static const char kDefaultUpstairChar               {'<'};
+static const char kDefaultDownstairChar             {'>'};
+
 static const float kDefaultEmptyDrawPriority        {0.5f};
 static const float kDefaultWallDrawPriority         {0.6f};
 static const float kDefaultDoorDrawPriority         {0.7f};
+static const float kDefaultStairDrawPriority        {0.8f};
 
 }
 

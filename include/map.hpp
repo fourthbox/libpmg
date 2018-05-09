@@ -53,13 +53,21 @@ public:
     Tile *GetTile(std::pair<std::size_t, std::size_t> xy);
     
     /**
+     Gets the tiles adjacent to the selected location.
+     @param location The location to get the neighbors from
+     @param dir Whether getting only tiles adjacent on cardinal directions, or diagonal tiles
+     @return A vector of pointers to the neighbor locations
+     */
+    std::vector<Location*> GetNeighbors(Location *location, MoveDirections const &dir = MoveDirections::FOUR_DIRECTIONAL) override;
+    
+    /**
      Gets the tiles adjacent to the selected tile.
      @param location The tile to get the neighbors from
      @param dir Whether getting only tiles adjacent on cardinal directions, or diagonal tiles
      @return A vector of pointers to the neighbor tiles
      */
-    std::vector<Location*> GetNeighbors(Location *location, MoveDirections const &dir = MoveDirections::FOUR_DIRECTIONAL) override;
-    
+    std::vector<Tile*> GetNeighbors(Tile *location, MoveDirections const &dir = MoveDirections::FOUR_DIRECTIONAL);
+
     /**
      Get the map size.
      @return A pair containing map width and height

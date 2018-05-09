@@ -35,6 +35,12 @@ public:
     std::size_t GetRandomUintFromRange(std::size_t min, std::size_t max);
     
     /**
+     Return the rng.
+     @return The Random Number Generator
+     */
+    inline std::shared_ptr<std::mt19937> GetGenerator() { return random_generator_; }
+    
+    /**
      Reset the instance and applies the seed.
      */
     void ResetInstance();
@@ -45,7 +51,7 @@ private:
     RndManager(RndManager const&) = delete;
     void operator=(RndManager const&) = delete;
     
-    std::mt19937 *random_generator_;
+    std::shared_ptr<std::mt19937> random_generator_;
 };
     
 }
