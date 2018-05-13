@@ -8,7 +8,7 @@
 namespace libpmg {
     
 WorldBuilder::WorldBuilder() {
-    map_ = std::make_shared<WorldMap>();
+    map_ = std::make_unique<WorldMap>();
     height_map_ = nullptr;
 }
 

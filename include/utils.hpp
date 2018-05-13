@@ -98,9 +98,9 @@ struct Utils {
      @param diagonals Whether diagonal paths should be used (compatible with FOUR_DIRECTIONAL, creating a "stair" effect)
      @param dir Whether locations can be connected diagonally
      @param reset_path_flags Whether path flags should be reset before running the algorithm
-     @return An unordered map of locations. The key is the location "connected" to the value on the generated path
+     @return A pointer to an unordered map of locations. The key is the location "connected" to the value on the generated path
      */
-    static std::shared_ptr<std::unordered_map<Location*, Location*>>
+    static std::unique_ptr<std::unordered_map<Location*, Location*>>
     BreadthFirstSearch(std::pair<std::size_t, std::size_t> start_coor,
                        std::pair<std::size_t, std::size_t> end_coor,
                        Map *map,
@@ -115,9 +115,9 @@ struct Utils {
      @param map A pointer to the Map where the search is happening
      @param dir Whether locations can be connected diagonally
      @param reset_path_flags Whether path flags should be reset before running the algorithm
-     @return An unordered map of locations. The key is the location "connected" to the value on the generated path
+     @return A pointer to an unordered map of locations. The key is the location "connected" to the value on the generated path
      */
-    static std::shared_ptr<std::unordered_map<Location*, Location*>>
+    static std::unique_ptr<std::unordered_map<Location*, Location*>>
     Dijkstra(std::pair<std::size_t, std::size_t> start_coor,
              std::pair<std::size_t, std::size_t> end_coor,
              Map *map,
@@ -131,9 +131,9 @@ struct Utils {
      @param map A pointer to the Map where the search is happening
      @param dir Whether locations can be connected diagonally
      @param reset_path_flags Whether path flags should be reset before running the algorithm
-     @return An unordered map of locations. The key is the location "connected" to the value on the generated path
+     @return A pointer to an unordered map of locations. The key is the location "connected" to the value on the generated path
      */
-    static std::shared_ptr<std::unordered_map<Location*, Location*>>
+    static std::unique_ptr<std::unordered_map<Location*, Location*>>
     Astar(std::pair<std::size_t, std::size_t> start_coor,
           std::pair<std::size_t, std::size_t> end_coor,
           Map *map,

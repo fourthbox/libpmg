@@ -4,9 +4,9 @@
 
 namespace libpmg {
     
-typedef std::shared_ptr<std::unordered_map<Location*, Location*>> LocationMap_p;
+typedef std::unique_ptr<std::unordered_map<Location*, Location*>> LocationMap_up;
 
-LocationMap_p Utils::Astar(std::pair<size_t, size_t> start_coor,
+LocationMap_up Utils::Astar(std::pair<size_t, size_t> start_coor,
                            std::pair<size_t, size_t> end_coor,
                            Map *map,
                            MoveDirections const &dir,
@@ -19,7 +19,7 @@ LocationMap_p Utils::Astar(std::pair<size_t, size_t> start_coor,
     
     PriorityQueue<Location*, float> frontier;
     std::unordered_map<Location*, float> cost_so_far;
-    auto came_from {std::make_shared<std::unordered_map<Location*, Location*>>()};
+    auto came_from {std::make_unique<std::unordered_map<Location*, Location*>>()};
     
     //Start point
     start_tile->is_path_explored_ = true;
@@ -59,7 +59,7 @@ LocationMap_p Utils::Astar(std::pair<size_t, size_t> start_coor,
     return nullptr;
 }
 
-LocationMap_p Utils::Dijkstra(std::pair<size_t, size_t> start_coor,
+LocationMap_up Utils::Dijkstra(std::pair<size_t, size_t> start_coor,
                               std::pair<size_t, size_t> end_coor,
                               Map *map,
                               MoveDirections const &dir,
@@ -72,7 +72,7 @@ LocationMap_p Utils::Dijkstra(std::pair<size_t, size_t> start_coor,
     
     PriorityQueue<Location*, float> frontier;
     std::unordered_map<Location*, float> cost_so_far;
-    auto came_from {std::make_shared<std::unordered_map<Location*, Location*>>()};
+    auto came_from {std::make_unique<std::unordered_map<Location*, Location*>>()};
     
     //Start point
     start_tile->is_path_explored_ = true;
@@ -100,7 +100,7 @@ LocationMap_p Utils::Dijkstra(std::pair<size_t, size_t> start_coor,
     return nullptr;
 }
 
-LocationMap_p Utils::BreadthFirstSearch(std::pair<size_t, size_t> start_coor,
+LocationMap_up Utils::BreadthFirstSearch(std::pair<size_t, size_t> start_coor,
                                         std::pair<size_t, size_t> end_coor,
                                         Map *map,
                                         bool diagonals,
@@ -113,7 +113,7 @@ LocationMap_p Utils::BreadthFirstSearch(std::pair<size_t, size_t> start_coor,
     auto end_tile {map->GetTile(end_coor)};
     
     std::queue<Location*> frontier;
-    auto came_from {std::make_shared<std::unordered_map<Location*, Location*>>()};
+    auto came_from {std::make_unique<std::unordered_map<Location*, Location*>>()};
     
     //Start point
     start_tile->is_path_explored_ = true;

@@ -17,7 +17,7 @@
 namespace libpmg {
     
 typedef std::shared_ptr<Tag> Tag_p;
-typedef std::shared_ptr<std::unordered_map<Location*, Location*>> LocationMap_p;
+typedef std::unique_ptr<std::unordered_map<Location*, Location*>> LocationMap_up;
     
 DungeonBuilder::DungeonBuilder()
 : default_path_algorithm_ {PathAlgorithm::ASTAR_BFS_MIX},
@@ -74,18 +74,18 @@ bool DungeonBuilder::IsDiagonalCorridor() {
  @param room2 The second room.
  */
 void DungeonBuilder::ConnectRooms(Room const &room1, Room const &room2) {
-    Location* start {map_->GetTile(room1.GetRndCoords())};
-    Location* end {map_->GetTile(room2.GetRndCoords())};
+    Location *start {map_->GetTile(room1.GetRndCoords())};
+    Location *end {map_->GetTile(room2.GetRndCoords())};
     
-    LocationMap_p path {nullptr};
+    LocationMap_up path {nullptr};
     switch (default_path_algorithm_) {
         case PathAlgorithm::BREADTH_FIRST_SEARCH:
-            path = Utils::BreadthFirstSearch(
+            path = std::move(Utils::BreadthFirstSearch(
                                              start->GetXY(),
                                              end->GetXY(),
                                              map_.get(),
                                              IsDiagonalCorridor(),
-                                             MoveDirections::FOUR_DIRECTIONAL);
+                                             MoveDirections::FOUR_DIRECTIONAL));
             break;
         case PathAlgorithm::DIJKSTRA:
             path = Utils::Dijkstra(
@@ -122,7 +122,7 @@ void DungeonBuilder::ConnectRooms(Room const &room1, Room const &room2) {
     assert(path != nullptr);
     
     // Returns the Location from which coords it come from
-    auto calculate_from_where = [=] (Location *coords, LocationMap_p came_from) -> Location* {
+    auto calculate_from_where = [=] (Location *coords, LocationMap_up &came_from) -> Location* {
         for (auto const &kv : *came_from) {
             if (kv.first == coords)
                 return kv.second;
