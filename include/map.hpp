@@ -84,8 +84,11 @@ public:
      */
     void ResetPathFlags() override;
     
-protected:    
-    std::string map_uuid_;      /**< A unique id for this particular instance. */
+    /**
+     Gets the map.
+     @return A pointer to the vector containing all the Tile in this map
+     */
+    virtual std::unique_ptr<std::vector<std::unique_ptr<Tile>>> &GetMap() = 0;
     
     /**
      Gets the configuration MapConfigs for this map.
@@ -93,11 +96,8 @@ protected:
      */
     virtual MapConfigs &GetConfigs() = 0;
     
-    /**
-     Gets the map.
-     @return A pointer to the vector containing all the Tile in this map
-     */
-    virtual std::unique_ptr<std::vector<std::unique_ptr<Tile>>> &GetMap() = 0;
+protected:    
+    std::string map_uuid_;      /**< A unique id for this particular instance. */
     
     /**
      Checks whether the specified coordinates are inside of the map.

@@ -39,7 +39,7 @@ public:
      Build the map and returns a pointer.
      @return A pointer to the built map.
      */
-    virtual std::shared_ptr<Map> Build() = 0;
+    virtual std::unique_ptr<Map> &Build() = 0;
     
 };
 

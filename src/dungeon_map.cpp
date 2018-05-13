@@ -15,6 +15,7 @@ DungeonMap::DungeonMap(DungeonMap &other) {
 
 DungeonMap::DungeonMap(MapConfigs &configs)  {    
     configs_ = std::make_unique<DungeonMapConfigs>((DungeonMapConfigs&) configs);
+    map_ = std::make_unique<std::vector<std::unique_ptr<Tile>>>();
 }
 
 }

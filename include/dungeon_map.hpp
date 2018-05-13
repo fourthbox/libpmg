@@ -36,7 +36,6 @@ struct DungeonMapConfigs : public MapConfigs {
  Class that holds and manages all tile informations for a dungeon map.
  */
 class DungeonMap : public Map {
-    friend class DungeonBuilder;
     
 public:
     DungeonMap();

@@ -130,10 +130,16 @@ public:
      Build the map and returns a pointer.
      @return A pointer to the built map.
      */
-    std::shared_ptr<Map> Build() override;
+    std::unique_ptr<Map> &Build() override;
+    
+    /**
+     Build the map and returns a pointer.
+     @return A pointer to the built map.
+     */
+    std::unique_ptr<DungeonMap> &BuildDungeon();
         
 private:
-    std::shared_ptr<DungeonMap> map_;       /**< The map. */
+    std::unique_ptr<Map> map_;       /**< The map. */
     PathAlgorithm default_path_algorithm_;  /**< The default path finder algorithm used for generating corridors. */
     bool allow_diagonal_corridors_;         /**< Should the builder generate diagonal corridors? */
     

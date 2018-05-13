@@ -29,9 +29,10 @@ enum struct BiomeType {
  This class holds the extra information needed by world map tile
  */
 class WorldTile : public Tile {
-    friend class WorldBuilder;
     
 public:
+    friend class WorldBuilder;
+    
     WorldTile (std::size_t x, std::size_t y) : Tile (x, y) {}
     
     inline float GetAltitude() { return altitude_; }

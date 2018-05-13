@@ -1,3 +1,7 @@
+## [v0.3.1]
+### Changed
+- Better
+
 ## [v0.3.0]
 ### Added
 - Added function to generate stairs in the dungeon.

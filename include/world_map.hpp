@@ -41,7 +41,6 @@ public:
  Class that holds and manages all tile informations for a world map.
  */
 class WorldMap : public Map {
-    friend class WorldBuilder;
 
 public:
     WorldMap() {}
