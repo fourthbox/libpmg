@@ -70,12 +70,12 @@ public:
      Gets a reference to the room list of this map.
      @return A reference to room_list_
      */
-    constexpr std::vector<Room*> &GetRoomList() { return room_list_; }
+    constexpr std::vector<std::unique_ptr<Room>> &GetRoomList() { return room_list_; }
     
 protected:
     std::unique_ptr<std::vector<std::unique_ptr<Tile>>> map_;        /**< All the tiles for this current map */
     std::unique_ptr<DungeonMapConfigs> configs_;    /**< Pointer to the DungeonMapConfigs used to generate this map */
-    std::vector<Room*> room_list_;                   /**< A list holding all informations of original generated rooms */
+    std::vector<std::unique_ptr<Room>> room_list_;                   /**< A list holding all informations of original generated rooms */
     
 };
     

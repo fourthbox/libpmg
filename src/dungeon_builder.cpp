@@ -197,7 +197,8 @@ void DungeonBuilder::GenerateRooms() {
                                            map_->configs_->min_room_height_, map_->configs_->max_room_height_)};
             
             if (CanPlaceRect(++rndRect, {FLOOR_TAG_})) {
-                PlaceRoom(new Room(--rndRect));
+                auto new_room {std::make_unique<Room> (--rndRect)};
+                PlaceRoom(new_room);
                 break;
             }
             
@@ -441,7 +442,7 @@ void DungeonBuilder::PlaceRect(Rect const &rect, std::initializer_list<Tag_p> ta
     }
 }
 
-void DungeonBuilder::PlaceRoom(Room *room) {
+    void DungeonBuilder::PlaceRoom(std::unique_ptr<Room> &room) {
     if (map_->map_->empty()) {
         Utils::LogWarning("DungeonBuilder::placeRoom", "map_ has not been not initialized.\nInitializing now...");
         InitMap();
@@ -450,8 +451,8 @@ void DungeonBuilder::PlaceRoom(Room *room) {
     UpdateRect(room->GetRect(),
                {FLOOR_TAG_},
                {WALL_TAG_});
-    map_->room_list_.push_back(room);
-    room->Print();
+        map_->room_list_.push_back(std::move(room));
+    map_->room_list_.back()->Print();
 }
 
 void DungeonBuilder::RemoveRect(Rect const &rect, std::initializer_list<Tag_p> tags) {

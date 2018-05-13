@@ -78,7 +78,7 @@ public:
      Place a single room in a map without checking for collisions.
      @param room Pointer to the room to place
      */
-    void PlaceRoom(Room *room);
+    void PlaceRoom(std::unique_ptr<Room> &room);
     
     /**
      Set the max room size into the configs.
