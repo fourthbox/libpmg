@@ -6,6 +6,8 @@
 #ifndef LIBPMG_DUNGEON_BUILDER_HPP_
 #define LIBPMG_DUNGEON_BUILDER_HPP_
 
+#include <memory>
+
 #include "dungeon_map.hpp"
 #include "map_builder.hpp"
 #include "room.hpp"

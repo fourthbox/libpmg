@@ -22,11 +22,13 @@ typedef std::shared_ptr<std::unordered_map<Location*, Location*>> LocationMap_p;
 DungeonBuilder::DungeonBuilder()
 : default_path_algorithm_ {PathAlgorithm::ASTAR_BFS_MIX},
 allow_diagonal_corridors_ {true} {
-    map_ = std::make_shared<DungeonMap>();
+    map_ = std::make_unique<DungeonMap>();
+    
+    assert(map_->map_->empty());
 }
 
 std::shared_ptr<Map> DungeonBuilder::Build() {
-    if (map_->map_.empty()) {
+    if (map_->map_->empty()) {
         Utils::LogError("DungeonBuilder::Build", "Map has not been not initialized.\nAborting...");
         abort();
     }
@@ -35,26 +37,26 @@ std::shared_ptr<Map> DungeonBuilder::Build() {
 }
 
 void DungeonBuilder::SetDefaultPathAlgorithm(PathAlgorithm const &algorithm) {
-    assert (map_->map_.empty());
+    assert (map_->map_->empty());
 
     default_path_algorithm_ = algorithm;
 }
 
 void DungeonBuilder::SetDiagonalCorridors(bool allow) {
-    assert (map_->map_.empty());
+    assert (map_->map_->empty());
 
     allow_diagonal_corridors_ = allow;
 }
 
 void DungeonBuilder::SetMapSize(size_t width, size_t height) {
-    assert (map_->map_.empty());
+    assert (map_->map_->empty());
 
     map_->configs_->map_width_ = width;
     map_->configs_->map_height_ = height;
 }
 
 void DungeonBuilder::SetMaxRooms(size_t rooms) {
-    assert (map_->map_.empty());
+    assert (map_->map_->empty());
 
     map_->configs_->rooms_ = rooms;
 }
@@ -138,17 +140,17 @@ void DungeonBuilder::ConnectRooms(Room const &room1, Room const &room2) {
     
     // Applies a cost to every tile in a room or a corridor, and to their neighbors, in order to
     // avoid corridors intersecating too much
-    for (auto const &tile : map_->map_){
+    for (auto const &tile : *map_->map_){
         if (tile->Taggable::HasTag(FLOOR_TAG_)) {
             tile->path_cost_ = kDefaultWallTileCost;
-            for (auto const &nei : map_->GetNeighbors(tile, MoveDirections::EIGHT_DIRECTIONAL))
+            for (auto const &nei : map_->GetNeighbors(tile.get(), MoveDirections::EIGHT_DIRECTIONAL))
                 nei->path_cost_ = kDefaultWallTileCost;
         }
     }
 }
 
 void DungeonBuilder::GenerateCorridors() {
-    if (map_->room_list_.empty() || map_->map_.empty()) {
+    if (map_->room_list_.empty() || map_->map_->empty()) {
         Utils::LogWarning("DungeonBuilder::placeCorridors", "There are no rooms, or no free space. Skipping corridor generation...");
         return;
     }
@@ -162,11 +164,13 @@ void DungeonBuilder::GenerateCorridors() {
                      *map_->room_list_.at(map_->room_list_.size()-2),
                      *map_->room_list_.at(map_->room_list_.size()-1));
 }
-
+    
 void DungeonBuilder::InitMap() {
     for (auto i {0}; i < map_->configs_->map_height_; i++) {
-        for (auto j {0}; j < map_->configs_->map_width_; j++)
-            map_->map_.push_back(new Tile (j, i, {WALL_TAG_}));
+        for (auto j {0}; j < map_->configs_->map_width_; j++){
+            std::initializer_list<std::shared_ptr<Tag>> tags = {WALL_TAG_};
+            map_->map_->push_back(std::make_unique<Tile> (j, i, tags));
+        }
     }
 }
 
@@ -177,7 +181,7 @@ void DungeonBuilder::ResetMap(bool keep_configs) {
 }
 
 void DungeonBuilder::GenerateRooms() {
-    if (map_->map_.empty()) {
+    if (map_->map_->empty()) {
         Utils::LogWarning("DungeonBuilder::GenerateRooms", "m_map has not been not initialized. Initializing now...");
         InitMap();
     }
@@ -248,7 +252,7 @@ void DungeonBuilder::PlaceStairs(Tile *tile, bool is_upstairs) {
 }
 
 void DungeonBuilder::GenerateDoors() {
-    if (map_->room_list_.empty() || map_->map_.empty()) {
+    if (map_->room_list_.empty() || map_->map_->empty()) {
         Utils::LogWarning("DungeonBuilder::GenerateDoors", "There are no rooms, or no free space. Skipping door generation...");
         return;
     }
@@ -277,7 +281,7 @@ void DungeonBuilder::GenerateDoors() {
 }
     
 void DungeonBuilder::GenerateWallStairs(size_t up, size_t down) {
-    if (map_->room_list_.empty() || map_->map_.empty()) {
+    if (map_->room_list_.empty() || map_->map_->empty()) {
         Utils::LogWarning("DungeonBuilder::GenerateWallStairs", "There are no rooms, or no free space. Skipping door generation...");
         return;
     }
@@ -358,7 +362,7 @@ void DungeonBuilder::GenerateWallStairs(size_t up, size_t down) {
 }
     
 void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down, bool only_in_rooms, bool dig_space) {
-    if (map_->room_list_.empty() || map_->map_.empty()) {
+    if (map_->room_list_.empty() || map_->map_->empty()) {
         Utils::LogWarning("DungeonBuilder::GenerateGroundStairs", "There are no rooms, or no free space. Skipping door generation...");
         return;
     }
@@ -377,9 +381,9 @@ void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down, bool only_in_r
         }
     } else {
         // Scan for walkable tiles
-        for (auto const &tile : map_->map_) {
+        for (auto const &tile : *map_->map_) {
             if (!tile->HasAnyTag({DOWNSTAIRS_TAG_, UPSTAIRS_TAG_, DOOR_TAG_, WALL_TAG_})) {
-                eligeble_tiles.push_back(tile);
+                eligeble_tiles.push_back(tile.get());
             }
         }
     }
@@ -438,7 +442,7 @@ void DungeonBuilder::PlaceRect(Rect const &rect, std::initializer_list<Tag_p> ta
 }
 
 void DungeonBuilder::PlaceRoom(Room *room) {
-    if (map_->map_.empty()) {
+    if (map_->map_->empty()) {
         Utils::LogWarning("DungeonBuilder::placeRoom", "map_ has not been not initialized.\nInitializing now...");
         InitMap();
     }
@@ -478,7 +482,7 @@ bool DungeonBuilder::CanPlaceRect(Rect const &rect,
 }
 
 void DungeonBuilder::SetMaxRoomPlacementAttempts(size_t attempts) {
-    assert(attempts != 0 && map_->map_.empty());
+    assert(attempts != 0 && map_->map_->empty());
     
     map_->configs_->max_room_placement_attempts_ = attempts;
 }
@@ -488,7 +492,7 @@ void DungeonBuilder::SetMaxRoomSize(size_t width, size_t height) {
            && height < map_->configs_->map_height_
            && width >= map_->configs_->min_room_width_
            && height >= map_->configs_->min_room_height_
-           && map_->map_.empty());
+           && map_->map_->empty());
     
     map_->configs_->max_room_width_ = width;
     map_->configs_->max_room_height_ = height;
@@ -499,7 +503,7 @@ void DungeonBuilder::SetMinRoomSize(size_t width, size_t height) {
            && height < map_->configs_->map_height_
            && width >= map_->configs_->min_room_width_
            && height >= map_->configs_->min_room_height_
-           && map_->map_.empty());
+           && map_->map_->empty());
     
     map_->configs_->min_room_width_ = width;
     map_->configs_->min_room_height_ = height;

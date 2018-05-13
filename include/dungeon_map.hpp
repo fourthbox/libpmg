@@ -46,7 +46,7 @@ public:
      Initializes the DungeonMap copying another map
      @param other The map from which copy the parameters from
      */
-    DungeonMap(DungeonMap const &other);
+    DungeonMap(DungeonMap &other);
     
     /**
      Initializes the DungeonMap and setup new configs
@@ -64,7 +64,7 @@ public:
      Gets the map.
      @return A vector containing all the Tile in this map
      */
-    std::vector<Tile*> &GetMap() override { return map_; }
+    std::unique_ptr<std::vector<std::unique_ptr<Tile>>> &GetMap() override { return map_; }
 
     /**
      Gets a reference to the room list of this map.
@@ -73,7 +73,7 @@ public:
     constexpr std::vector<Room*> &GetRoomList() { return room_list_; }
     
 protected:
-    std::vector<Tile*> map_;        /**< All the tiles for this current map */
+    std::unique_ptr<std::vector<std::unique_ptr<Tile>>> map_;        /**< All the tiles for this current map */
     std::shared_ptr<DungeonMapConfigs> configs_;    /**< Pointer to the DungeonMapConfigs used to generate this map */
     std::vector<Room*> room_list_;                   /**< A list holding all informations of original generated rooms */
     

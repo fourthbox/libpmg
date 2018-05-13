@@ -4,12 +4,13 @@ namespace libpmg {
     
 DungeonMap::DungeonMap() {
     configs_ = std::make_shared<DungeonMapConfigs>();
+    map_ = std::make_unique<std::vector<std::unique_ptr<Tile>>>();
 }
     
-DungeonMap::DungeonMap(DungeonMap const &other) {
+DungeonMap::DungeonMap(DungeonMap &other) {
     map_uuid_ = other.map_uuid_;
     configs_ = other.configs_;
-    map_ = other.map_;
+    map_ = std::move(other.map_);
 }
 
 DungeonMap::DungeonMap(std::shared_ptr<MapConfigs> configs)  {

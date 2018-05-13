@@ -79,8 +79,8 @@ Tile *Map::GetTile(std::pair<size_t, size_t> xy) {
 Tile *Map::GetTile(size_t x, size_t y) {
     if (!BoundsCheck(x, y))
         return nullptr;
-        
-    return GetMap()[y * GetConfigs()->map_width_ + x];
+    
+    return (*GetMap())[y * GetConfigs()->map_width_ + x].get();
 }
 
 void Map::Print() {
@@ -98,12 +98,12 @@ void Map::Print() {
 }
     
 void Map::ResetLocationCosts() {
-    for (auto const &tile : GetMap())
+    for (auto const &tile : *GetMap())
         tile->path_cost_ = kDefaultEmptyTileCost;
 }
 
 void Map::ResetPathFlags() {
-    for (auto const &tile : GetMap()) tile->is_path_explored_ = false;
+    for (auto const &tile : *GetMap()) tile->is_path_explored_ = false;
 }
     
 }

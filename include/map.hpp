@@ -97,7 +97,7 @@ protected:
      Gets the map.
      @return A vector containing all the Tile in this map
      */
-    virtual std::vector<Tile*> &GetMap() = 0;
+    virtual std::unique_ptr<std::vector<std::unique_ptr<Tile>>> &GetMap() = 0;
     
     /**
      Checks whether the specified coordinates are inside of the map.

@@ -58,10 +58,10 @@ public:
      Gets the map.
      @return A vector containing all the Tile in this map
      */
-    std::vector<Tile*> &GetMap() override { return map_; }
+    std::unique_ptr<std::vector<std::unique_ptr<Tile>>> &GetMap() override { return map_; }
         
 protected:
-    std::vector<Tile*> map_;
+    std::unique_ptr<std::vector<std::unique_ptr<Tile>>> map_;
     std::shared_ptr<WorldMapConfigs> configs_;
 
 };
