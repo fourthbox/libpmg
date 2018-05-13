@@ -3,6 +3,12 @@
 #include <cassert>
 #include <queue>
 
+#define FLOOR_TAG_ TagManager::GetInstance().floor_tag_
+#define WALL_TAG_ TagManager::GetInstance().wall_tag_
+#define DOOR_TAG_ TagManager::GetInstance().door_tag_
+#define UPSTAIRS_TAG_ TagManager::GetInstance().upstairs_tag_
+#define DOWNSTAIRS_TAG_ TagManager::GetInstance().downstairs_tag_
+
 #include "constants.hpp"
 #include "dungeon_map.hpp"
 #include "rnd_manager.hpp"
@@ -12,7 +18,7 @@ namespace libpmg {
     
 typedef std::shared_ptr<Tag> Tag_p;
 typedef std::shared_ptr<std::unordered_map<Location*, Location*>> LocationMap_p;
-
+    
 DungeonBuilder::DungeonBuilder()
 : default_path_algorithm_ {PathAlgorithm::ASTAR_BFS_MIX},
 allow_diagonal_corridors_ {true} {
@@ -126,14 +132,14 @@ void DungeonBuilder::ConnectRooms(Room const &room1, Room const &room2) {
     
     // Flags the generated corridor with the proper tags
     while (end != start) {
-        map_->GetTile(end->GetXY())->UpdateTags({TagManager::GetInstance().floor_tag_}, {TagManager::GetInstance().wall_tag_});
+        map_->GetTile(end->GetXY())->UpdateTags({FLOOR_TAG_}, {WALL_TAG_});
         end = calculate_from_where(end, path);
     }
     
     // Applies a cost to every tile in a room or a corridor, and to their neighbors, in order to
     // avoid corridors intersecating too much
     for (auto const &tile : map_->map_){
-        if (tile->Taggable::HasTag(TagManager::GetInstance().floor_tag_)) {
+        if (tile->Taggable::HasTag(FLOOR_TAG_)) {
             tile->path_cost_ = kDefaultWallTileCost;
             for (auto const &nei : map_->GetNeighbors(tile, MoveDirections::EIGHT_DIRECTIONAL))
                 nei->path_cost_ = kDefaultWallTileCost;
@@ -160,7 +166,7 @@ void DungeonBuilder::GenerateCorridors() {
 void DungeonBuilder::InitMap() {
     for (auto i {0}; i < map_->configs_->map_height_; i++) {
         for (auto j {0}; j < map_->configs_->map_width_; j++)
-            map_->map_.push_back(new Tile (j, i, {TagManager::GetInstance().wall_tag_}));
+            map_->map_.push_back(new Tile (j, i, {WALL_TAG_}));
     }
 }
 
@@ -186,7 +192,7 @@ void DungeonBuilder::GenerateRooms() {
                                            map_->configs_->min_room_width_, map_->configs_->max_room_width_,
                                            map_->configs_->min_room_height_, map_->configs_->max_room_height_)};
             
-            if (CanPlaceRect(++rndRect, {TagManager::GetInstance().floor_tag_})) {
+            if (CanPlaceRect(++rndRect, {FLOOR_TAG_})) {
                 PlaceRoom(new Room(--rndRect));
                 break;
             }
@@ -200,7 +206,7 @@ void DungeonBuilder::GenerateRooms() {
 void DungeonBuilder::PlaceDoor(Tile *tile) {
     assert (tile != nullptr);
     
-    if (!tile->HasTag(TagManager::GetInstance().floor_tag_))
+    if (!tile->HasTag(FLOOR_TAG_))
         return;
     
     //    Get the four neighbours
@@ -212,11 +218,11 @@ void DungeonBuilder::PlaceDoor(Tile *tile) {
     auto wall_count {0};
     for (auto const &nei : neis) {
         // If one neighbour has a door, exit
-        if (nei->HasTag(TagManager::GetInstance().door_tag_))
+        if (nei->HasTag(DOOR_TAG_))
             return;
         
         // Count how many neighbours has walls
-        if (nei->HasTag(TagManager::GetInstance().wall_tag_))
+        if (nei->HasTag(WALL_TAG_))
             wall_count++;
     }
     
@@ -225,50 +231,20 @@ void DungeonBuilder::PlaceDoor(Tile *tile) {
         return;
     
     // Checks if the 2 neighbouring wall tiles are opposed to eachother
-    if ((map_->GetTile(tile->GetX(), tile->GetY()-1)->HasTag(TagManager::GetInstance().wall_tag_)
-         && map_->GetTile(tile->GetX(), tile->GetY()+1)->HasTag(TagManager::GetInstance().wall_tag_))
-        || (map_->GetTile(tile->GetX()-1, tile->GetY())->HasTag(TagManager::GetInstance().wall_tag_)
-            && map_->GetTile(tile->GetX()+1, tile->GetY())->HasTag(TagManager::GetInstance().wall_tag_)))
-        tile->AddTag(TagManager::GetInstance().door_tag_);
+    if ((map_->GetTile(tile->GetX(), tile->GetY()-1)->HasTag(WALL_TAG_)
+         && map_->GetTile(tile->GetX(), tile->GetY()+1)->HasTag(WALL_TAG_))
+        || (map_->GetTile(tile->GetX()-1, tile->GetY())->HasTag(WALL_TAG_)
+            && map_->GetTile(tile->GetX()+1, tile->GetY())->HasTag(WALL_TAG_)))
+        tile->AddTag(DOOR_TAG_);
 }
     
-bool DungeonBuilder::PlaceStairs(Tile *tile, bool is_upstairs) {
+void DungeonBuilder::PlaceStairs(Tile *tile, bool is_upstairs) {
     assert (tile != nullptr);
     
-    // Door and floor tiles are not eligible
-    if (tile->HasTag(TagManager::GetInstance().door_tag_) || !tile->HasTag(TagManager::GetInstance().wall_tag_))
-        return false;
-    
-    //    Get the four neighbours
-    auto neis {map_->GetNeighbors(tile, MoveDirections::FOUR_DIRECTIONAL)};
-    
-    // Discard any near the border location
-    if (neis.size() != 4)
-        return false;
-        
-    auto wall_count {0};
-    for (auto const &nei : neis) {
-        
-        // Neighboring tiles cannot have stairs
-        if (nei->HasTag(TagManager::GetInstance().upstairs_tag_) || nei->HasTag(TagManager::GetInstance().downstairs_tag_))
-            return false;
-            
-        // Count how many neighbours has walls
-        if (nei->HasTag(TagManager::GetInstance().wall_tag_))
-            wall_count++;
-    }
-    
-    // Wall embedded staris can only be placed into tiles adjacent to 3 walls, four directionally
-    if (wall_count == 3) {
-        if (is_upstairs)
-            tile->UpdateTags({TagManager::GetInstance().upstairs_tag_}, {TagManager::GetInstance().wall_tag_});
-        else
-            tile->UpdateTags({TagManager::GetInstance().downstairs_tag_}, {TagManager::GetInstance().wall_tag_});
-
-        return true;
-    }
-    
-    return false;
+    if (is_upstairs)
+        tile->UpdateTags({UPSTAIRS_TAG_}, {WALL_TAG_});
+    else
+        tile->UpdateTags({DOWNSTAIRS_TAG_}, {WALL_TAG_});
 }
 
 void DungeonBuilder::GenerateDoors() {
@@ -313,13 +289,13 @@ void DungeonBuilder::GenerateWallStairs(size_t up, size_t down) {
         Rect rect {room->Area::GetRect()};
         rect++;
 
-        for (auto w {0}; w < rect.GetWidth(); w++) {
+        for (auto w {1}; w < rect.GetWidth()-1; w++) {
             eligeble_tiles.push_back(map_->GetTile(rect.GetX() + w, rect.GetY()));
 
             eligeble_tiles.push_back(map_->GetTile(rect.GetX() + w, rect.GetY() + rect.GetHeight()-1));
         }
         
-        for (auto h {0}; h < rect.GetHeight(); h++) {
+        for (auto h {1}; h < rect.GetHeight()-1; h++) {
             eligeble_tiles.push_back(map_->GetTile(rect.GetX(), rect.GetY() + h));
 
             eligeble_tiles.push_back(map_->GetTile(rect.GetX() + rect.GetWidth()-1, rect.GetY() + h));
@@ -327,18 +303,61 @@ void DungeonBuilder::GenerateWallStairs(size_t up, size_t down) {
     }
     
     // Shuffle the vector
-    std::shuffle(std::begin(eligeble_tiles), std::begin(eligeble_tiles), *RndManager::GetInstance().GetGenerator());
+    std::shuffle(std::begin(eligeble_tiles), std::end(eligeble_tiles), RndManager::GetInstance().GetGenerator());
     
+    auto can_place_stairs = [&] (Tile* tile) -> bool {
+        assert (tile != nullptr);
+        
+        // Door and floor tiles are not eligible
+        if (tile->HasTag(DOOR_TAG_) || !tile->HasTag(WALL_TAG_))
+            return false;
+        
+        //    Get the four neighbours
+        auto neis {map_->GetNeighbors(tile, MoveDirections::FOUR_DIRECTIONAL)};
+        
+        // Discard any near the border location
+        if (neis.size() != 4)
+            return false;
+        
+        auto wall_count {0};
+        for (auto const &nei : neis) {
+            
+            // Neighboring tiles cannot have stairs
+            if (nei->HasTag(UPSTAIRS_TAG_) || nei->HasTag(DOWNSTAIRS_TAG_))
+                return false;
+            
+            // Count how many neighbours has walls
+            if (nei->HasTag(WALL_TAG_))
+                wall_count++;
+        }
+        
+        // Wall embedded staris can only be placed into tiles adjacent to 3 walls, four directionally
+        if (wall_count == 3)
+            return true;
+        
+        return false;
+    };
     
-    // TODO:
-//    remove stares from angles.
+    auto iterate_and_place = [&] (size_t amount, bool is_upstair) {
+        for (auto i {0}; i < amount; i++) {
+            if (eligeble_tiles.size() == 0)
+                break;
+            
+            if (auto tile {eligeble_tiles.back()}; can_place_stairs(tile)) {
+                PlaceStairs(tile, is_upstair);
+            }
+            else
+                i--;
+            
+            eligeble_tiles.pop_back();
+        }
+    };
     
-    for (auto const &tile : eligeble_tiles) {
-        PlaceStairs(tile, true);
-    }
+    iterate_and_place(up, true);
+    iterate_and_place(down, false);
 }
     
-void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down) {
+void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down, bool only_in_rooms, bool dig_space) {
     if (map_->room_list_.empty() || map_->map_.empty()) {
         Utils::LogWarning("DungeonBuilder::GenerateGroundStairs", "There are no rooms, or no free space. Skipping door generation...");
         return;
@@ -346,11 +365,67 @@ void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down) {
     
     std::vector<Tile*> eligeble_tiles;
     
-//    std::shuffle(eligeble_tiles.front(), eligeble_tiles.back(), *RndManager::GetInstance().GetGenerator());
-    
-    for (auto const &tile : eligeble_tiles) {
-//        tile->UpdateTags({TagManager::GetInstance().stairs_tag_}, {TagManager::GetInstance().wall_tag_});
+    if (only_in_rooms) {
+        for (auto const &room : map_->room_list_) {
+            // Scan the rooms and adds tiles
+            for (auto w {0}; w < room->GetRect().GetWidth(); w++) {
+                for (auto h {0}; h < room->GetRect().GetHeight(); h++) {
+//                    if (auto tile {map_->GetTile(w, h)}; !tile->HasAnyTag({DOWNSTAIRS_TAG_, UPSTAIRS_TAG_, DOOR_TAG_, WALL_TAG_}))
+                        if (auto tile {map_->GetTile(w, h)};true)
+                        eligeble_tiles.push_back(tile);
+                }
+            }
+        }
+    } else {
+        // Scan for walkable tiles
+        for (auto const &tile : map_->map_) {
+            if (!tile->HasAnyTag({DOWNSTAIRS_TAG_, UPSTAIRS_TAG_, DOOR_TAG_, WALL_TAG_})) {
+                eligeble_tiles.push_back(tile);
+            }
+        }
     }
+    
+    // Shuffle the vector
+    std::shuffle(std::begin(eligeble_tiles), std::end(eligeble_tiles), RndManager::GetInstance().GetGenerator());
+    
+    auto can_place_stairs = [&] (Tile* tile) -> bool {
+        assert (tile != nullptr);
+        
+        //    Get the four neighbours
+        for (auto const &nei : map_->GetNeighbors(tile, MoveDirections::EIGHT_DIRECTIONAL)) {
+            // Neighboring tiles cannot have stairs
+            if (nei->HasAnyTag({DOOR_TAG_, UPSTAIRS_TAG_, DOWNSTAIRS_TAG_}))
+                return false;
+        }
+        
+        return true;
+    };
+    
+    auto iterate_and_place = [&] (size_t amount, bool is_upstair) {
+        for (auto i {0}; i < amount; i++) {
+            if (eligeble_tiles.size() == 0)
+                break;
+            
+            if (auto tile {eligeble_tiles.back()}; can_place_stairs(tile)) {
+                PlaceStairs(tile, is_upstair);
+                
+                if (dig_space) {
+                    // Remove walls from neighbors
+                    for (auto const &nei : map_->GetNeighbors(tile, MoveDirections::EIGHT_DIRECTIONAL)) {
+                        // Neighboring tiles cannot have stairs
+                        nei->RemoveTag(WALL_TAG_);
+                    }
+                }
+            }
+            else
+                i--;
+            
+            eligeble_tiles.pop_back();
+        }
+    };
+    
+    iterate_and_place(up, true);
+    iterate_and_place(down, false);
 }
 
 void DungeonBuilder::PlaceRect(Rect const &rect, std::initializer_list<Tag_p> tags) {
@@ -370,8 +445,8 @@ void DungeonBuilder::PlaceRoom(Room *room) {
     }
     
     UpdateRect(room->GetRect(),
-               {TagManager::GetInstance().floor_tag_},
-               {TagManager::GetInstance().wall_tag_});
+               {FLOOR_TAG_},
+               {WALL_TAG_});
     map_->room_list_.push_back(room);
     room->Print();
 }

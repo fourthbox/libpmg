@@ -67,8 +67,10 @@ public:
      Generate a variable number of up and down stairs, dig into the ground.
      @param up Number of stairs up.
      @param down Number of staris down.
+     @param only_in_rooms If set to true locations will only be picked inside of rooms
+     @param dig_space If set to true will remove walls from the 8 tiles adjacent to every stair
      */
-    void GenerateGroundStairs(size_t up, size_t down);
+    void GenerateGroundStairs(size_t up, size_t down, bool only_in_rooms, bool dig_space);
     
     /**
      Place a single room in a map without checking for collisions.
@@ -189,9 +191,8 @@ private:
      In order to be eligible for stairs, a tile must have at least 3 adjacent tiles (in four cardinal directions)
      @param tile A pointer to the tile that will host the stair
      @param is_upstairs If set to true, the stair will be upstairs. It will be downstairs otherwise.
-     @return True if the stair were succesfully placed, false otherwise.
      */
-    bool PlaceStairs(Tile *tile, bool is_upstairs);
+    void PlaceStairs(Tile *tile, bool is_upstairs);
     
     /**
      Check if the corridor to be placed should be diagonal.

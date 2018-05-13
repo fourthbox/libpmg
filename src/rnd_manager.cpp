@@ -17,7 +17,7 @@ RndManager::RndManager() {
 }
 
 void RndManager::ResetInstance() {
-    random_generator_ = std::make_shared<std::mt19937> (seed_);
+    random_generator_ = std::make_unique<std::mt19937> (seed_);
 }
     
 }

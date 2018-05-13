@@ -38,7 +38,7 @@ public:
      Return the rng.
      @return The Random Number Generator
      */
-    inline std::shared_ptr<std::mt19937> GetGenerator() { return random_generator_; }
+    inline std::mt19937 &GetGenerator() { return *random_generator_; }
     
     /**
      Reset the instance and applies the seed.
@@ -51,7 +51,7 @@ private:
     RndManager(RndManager const&) = delete;
     void operator=(RndManager const&) = delete;
     
-    std::shared_ptr<std::mt19937> random_generator_;
+    std::unique_ptr<std::mt19937> random_generator_;
 };
     
 }
