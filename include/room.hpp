@@ -15,15 +15,12 @@ namespace libpmg {
  */
 class Room : public Area {
 public:
-    Room(Rect rect, size_t x_position, size_t y_position);
-    
+    Room(Rect rect) : Area(rect) {}
+
     /**
      Prints debug information about this Room.
      */
     void Print();
-    
-private:
-    size_t x_position, y_position;  /**< The top left coordinates of the room in the map.*/
 };
     
 }

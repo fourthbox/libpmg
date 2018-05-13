@@ -368,10 +368,9 @@ void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down, bool only_in_r
     if (only_in_rooms) {
         for (auto const &room : map_->room_list_) {
             // Scan the rooms and adds tiles
-            for (auto w {0}; w < room->GetRect().GetWidth(); w++) {
-                for (auto h {0}; h < room->GetRect().GetHeight(); h++) {
-//                    if (auto tile {map_->GetTile(w, h)}; !tile->HasAnyTag({DOWNSTAIRS_TAG_, UPSTAIRS_TAG_, DOOR_TAG_, WALL_TAG_}))
-                        if (auto tile {map_->GetTile(w, h)};true)
+            for (auto w {room->GetRect().GetX()}; w < room->GetRect().GetX() + room->GetRect().GetWidth(); w++) {
+                for (auto h {room->GetRect().GetY()}; h < room->GetRect().GetY() + room->GetRect().GetHeight(); h++) {
+                    if (auto tile {map_->GetTile(w, h)}; !tile->HasAnyTag({DOWNSTAIRS_TAG_, UPSTAIRS_TAG_, DOOR_TAG_, WALL_TAG_}))
                         eligeble_tiles.push_back(tile);
                 }
             }
@@ -390,7 +389,7 @@ void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down, bool only_in_r
     
     auto can_place_stairs = [&] (Tile* tile) -> bool {
         assert (tile != nullptr);
-        
+                
         //    Get the four neighbours
         for (auto const &nei : map_->GetNeighbors(tile, MoveDirections::EIGHT_DIRECTIONAL)) {
             // Neighboring tiles cannot have stairs
