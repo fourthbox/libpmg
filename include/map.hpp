@@ -89,13 +89,13 @@ protected:
     
     /**
      Gets the configuration MapConfigs for this map.
-     @return A pointer to the configuration MapConfigs for this map.
+     @return A reference to the configuration MapConfigs for this map.
      */
-    virtual std::shared_ptr<MapConfigs> GetConfigs() = 0;
+    virtual MapConfigs &GetConfigs() = 0;
     
     /**
      Gets the map.
-     @return A vector containing all the Tile in this map
+     @return A pointer to the vector containing all the Tile in this map
      */
     virtual std::unique_ptr<std::vector<std::unique_ptr<Tile>>> &GetMap() = 0;
     
@@ -105,7 +105,7 @@ protected:
      @param y The Y coordinate
      @return True if the coordinate are inside the map, false otherwise.
      */
-    inline bool BoundsCheck(std::size_t x, std::size_t y) { return x < GetConfigs()->map_width_ && y < GetConfigs()->map_height_; }
+    inline bool BoundsCheck(std::size_t x, std::size_t y) { return x < GetConfigs().map_width_ && y < GetConfigs().map_height_; }
     
     /**
      Checks whether the specified tile is inside of the map.

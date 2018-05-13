@@ -176,7 +176,7 @@ void DungeonBuilder::InitMap() {
 
 void DungeonBuilder::ResetMap(bool keep_configs) {
     auto configs {map_->GetConfigs()};
-    map_ = std::make_shared<DungeonMap>(configs);
+    map_ = std::make_unique<DungeonMap>(configs);
     this->InitMap();
 }
 

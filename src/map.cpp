@@ -10,7 +10,7 @@ Map::Map() {
 }
 
 std::pair<size_t, size_t> Map::GetMapSize() {
-    return std::make_pair(GetConfigs()->map_width_, GetConfigs()->map_height_);
+    return std::make_pair(GetConfigs().map_width_, GetConfigs().map_height_);
 }
 
 std::vector<Location*> Map::GetNeighbors(Location *location, MoveDirections const &dir) {
@@ -80,14 +80,14 @@ Tile *Map::GetTile(size_t x, size_t y) {
     if (!BoundsCheck(x, y))
         return nullptr;
     
-    return (*GetMap())[y * GetConfigs()->map_width_ + x].get();
+    return (*GetMap())[y * GetConfigs().map_width_ + x].get();
 }
 
 void Map::Print() {
     std::string output {"\n"};
     
-    for ( size_t i {0}; i < GetConfigs()->map_height_; i++ ) {
-        for ( size_t j {0}; j < GetConfigs()->map_width_; j++ ) {
+    for ( size_t i {0}; i < GetConfigs().map_height_; i++ ) {
+        for ( size_t j {0}; j < GetConfigs().map_width_; j++ ) {
             if (auto t {GetTile(j, i)}; t != nullptr)
                 output += t->GetChar();
         }
