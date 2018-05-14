@@ -1,6 +1,6 @@
 ## [v0.3.1]
 ### Changed
-- Better
+- Better integration of ineheritance for the Map and MapBuilder class trees.
 
 ## [v0.3.0]
 ### Added
