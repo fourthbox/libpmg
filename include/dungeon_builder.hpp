@@ -60,19 +60,13 @@ public:
     
     /**
      Generate a variable number of up and down doors, embedded into walls.
-     @param up Number of stairs up.
-     @param down Number of staris down.
      */
-    void GenerateWallStairs(size_t up, size_t down);
+    void GenerateWallStairs();
     
     /**
      Generate a variable number of up and down stairs, dig into the ground.
-     @param up Number of stairs up.
-     @param down Number of staris down.
-     @param only_in_rooms If set to true locations will only be picked inside of rooms
-     @param dig_space If set to true will remove walls from the 8 tiles adjacent to every stair
      */
-    void GenerateGroundStairs(size_t up, size_t down, bool only_in_rooms, bool dig_space);
+    void GenerateGroundStairs();
     
     /**
      Place a single room in a map without checking for collisions.
@@ -125,6 +119,42 @@ public:
      @param rooms Max number of room
      */
     void SetMaxRooms(std::size_t rooms);
+    
+    /**
+     Set min number of upstair tiles to be generated.
+     @param min Min number of upstair tiles
+     */
+    void SetMinUpstairs(size_t min);
+    
+    /**
+     Set min number of downstair tiles to be generated.
+     @param max Min number of downstair tiles
+     */
+    void SetMinDownstairs(size_t max);
+    
+    /**
+     Set max number of upstair tiles to be generated.
+     @param min Max number of upstair tiles
+     */
+    void SetMaxUpstairs(size_t min);
+    
+    /**
+     Set max number of downstair tiles to be generated.
+     @param max Max number of downstair tiles
+     */
+    void SetMaxDownstairs(size_t max);
+    
+    /**
+     Set wether walls around stairs should be dug
+     @param allow If true walls around stairs should be dug
+     */
+    void SetDigSpaceAroundStairs(bool allow);
+    
+    /**
+     Set wether stairs are allowed to be dug only in rooms
+     @param allow Wether stairs should be allowed only in rooms
+     */
+    void SetDigStairsOnlyInRooms(bool allow);
     
     /**
      Build the map and returns a pointer.

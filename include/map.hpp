@@ -15,11 +15,6 @@ namespace libpmg {
  A struct that defines the configuration values for every map.
  */
 struct MapConfigs {
-    MapConfigs()
-    : map_width_ {185},
-    map_height_ {45}
-    {}
-    
     std::size_t map_width_;
     std::size_t map_height_;
 };

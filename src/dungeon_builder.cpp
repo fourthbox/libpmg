@@ -67,12 +67,43 @@ bool DungeonBuilder::IsDiagonalCorridor() {
     
     return false;
 }
+    
+void DungeonBuilder::SetMinUpstairs(size_t min) {
+    assert (map_->GetMap()->empty());
+    
+    ((DungeonMapConfigs&)map_->GetConfigs()).min_upstairs_ = min;
+}
+    
+void DungeonBuilder::SetMinDownstairs(size_t max) {
+    assert (map_->GetMap()->empty());
+    
+    ((DungeonMapConfigs&)map_->GetConfigs()).min_downstairs_ = max;
+}
 
-/**
- Connects two rooms with a corridor, generated with a random combination of Astar and BreadthFirstSearch.
- @param room1 The first room.
- @param room2 The second room.
- */
+void DungeonBuilder::SetMaxUpstairs(size_t min) {
+    assert (map_->GetMap()->empty());
+    
+    ((DungeonMapConfigs&)map_->GetConfigs()).max_upstairs_ = min;
+}
+
+void DungeonBuilder::SetMaxDownstairs(size_t max) {
+    assert (map_->GetMap()->empty());
+    
+    ((DungeonMapConfigs&)map_->GetConfigs()).max_downstairs_ = max;
+}
+    
+void DungeonBuilder::SetDigSpaceAroundStairs(bool allow) {
+    assert (map_->GetMap()->empty());
+    
+    ((DungeonMapConfigs&)map_->GetConfigs()).dig_space_around_stairs = allow;
+}
+
+void DungeonBuilder::SetDigStairsOnlyInRooms(bool allow) {
+    assert (map_->GetMap()->empty());
+    
+    ((DungeonMapConfigs&)map_->GetConfigs()).build_stairs_only_in_rooms_ = allow;
+}
+
 void DungeonBuilder::ConnectRooms(Room const &room1, Room const &room2) {
     Location *start {map_->GetTile(room1.GetRndCoords())};
     Location *end {map_->GetTile(room2.GetRndCoords())};
@@ -188,17 +219,17 @@ void DungeonBuilder::GenerateRooms() {
         InitMap();
     }
     
-    auto dungeon_configs {(DungeonMapConfigs&)map_->GetConfigs()};
-    
+    DungeonMapConfigs *dungeon_configs {&(DungeonMapConfigs&)map_->GetConfigs()};
+
     //  Generate each room.
-    for (auto i {0}; i < dungeon_configs.rooms_; i++) {
-        for (auto j {0}; j < dungeon_configs.max_room_placement_attempts_; j++) {
+    for (auto i {0}; i < dungeon_configs->rooms_; i++) {
+        for (auto j {0}; j < dungeon_configs->max_room_placement_attempts_; j++) {
             
             //          Get random rect
-            auto rndRect {Rect::GetRndRect(1, dungeon_configs.map_width_-1,
-                                           1, dungeon_configs.map_height_-1,
-                                           dungeon_configs.min_room_width_, dungeon_configs.max_room_width_,
-                                           dungeon_configs.min_room_height_, dungeon_configs.max_room_height_)};
+            auto rndRect {Rect::GetRndRect(1, dungeon_configs->map_width_-1,
+                                           1, dungeon_configs->map_height_-1,
+                                           dungeon_configs->min_room_width_, dungeon_configs->max_room_width_,
+                                           dungeon_configs->min_room_height_, dungeon_configs->max_room_height_)};
             
             if (CanPlaceRect(++rndRect, {FLOOR_TAG_})) {
                 auto new_room {std::make_unique<Room> (--rndRect)};
@@ -206,7 +237,7 @@ void DungeonBuilder::GenerateRooms() {
                 break;
             }
             
-            if (j == dungeon_configs.max_room_placement_attempts_ - 1)
+            if (j == dungeon_configs->max_room_placement_attempts_ - 1)
                 Utils::LogDebug( "DungeonBuilder", "Last room placement attempt failed. Moving on...");
         }
     }
@@ -287,7 +318,7 @@ void DungeonBuilder::GenerateDoors() {
     }
 }
     
-void DungeonBuilder::GenerateWallStairs(size_t up, size_t down) {
+void DungeonBuilder::GenerateWallStairs() {
     auto dungeon_map {(DungeonMap*)map_.get()};
 
     if (dungeon_map->GetRoomList().empty() || map_->GetMap()->empty()) {
@@ -352,6 +383,9 @@ void DungeonBuilder::GenerateWallStairs(size_t up, size_t down) {
     };
     
     auto iterate_and_place = [&] (size_t amount, bool is_upstair) {
+        if (amount == 0)
+            return;
+        
         for (auto i {0}; i < amount; i++) {
             if (eligeble_tiles.size() == 0)
                 break;
@@ -366,11 +400,18 @@ void DungeonBuilder::GenerateWallStairs(size_t up, size_t down) {
         }
     };
     
-    iterate_and_place(up, true);
-    iterate_and_place(down, false);
+    // Get the map config
+    DungeonMapConfigs *dungeon_configs {&(DungeonMapConfigs&)map_->GetConfigs()};
+
+    // Iterate and place
+    iterate_and_place(RndManager::GetInstance().GetRandomUintFromRange(dungeon_configs->min_upstairs_,
+                                                                       dungeon_configs->max_upstairs_), true);
+    
+    iterate_and_place(RndManager::GetInstance().GetRandomUintFromRange(dungeon_configs->min_downstairs_,
+                                                                       dungeon_configs->max_downstairs_), false);
 }
     
-void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down, bool only_in_rooms, bool dig_space) {
+void DungeonBuilder::GenerateGroundStairs() {
     auto dungeon_map {(DungeonMap*)map_.get()};
 
     if (dungeon_map->GetRoomList().empty() || map_->GetMap()->empty()) {
@@ -378,9 +419,12 @@ void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down, bool only_in_r
         return;
     }
     
+    // Get the dungeon congifs
+    DungeonMapConfigs *dungeon_configs {&(DungeonMapConfigs&)map_->GetConfigs()};
+
     std::vector<Tile*> eligeble_tiles;
     
-    if (only_in_rooms) {
+    if (dungeon_configs->build_stairs_only_in_rooms_) {
         for (auto const &room : dungeon_map->GetRoomList()) {
             // Scan the rooms and adds tiles
             for (auto w {room->GetRect().GetX()}; w < room->GetRect().GetX() + room->GetRect().GetWidth(); w++) {
@@ -423,7 +467,7 @@ void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down, bool only_in_r
             if (auto tile {eligeble_tiles.back()}; can_place_stairs(tile)) {
                 PlaceStairs(tile, is_upstair);
                 
-                if (dig_space) {
+                if (dungeon_configs->dig_space_around_stairs) {
                     // Remove walls from neighbors
                     for (auto const &nei : map_->GetNeighbors(tile, MoveDirections::EIGHT_DIRECTIONAL)) {
                         // Neighboring tiles cannot have stairs
@@ -438,8 +482,11 @@ void DungeonBuilder::GenerateGroundStairs(size_t up, size_t down, bool only_in_r
         }
     };
     
-    iterate_and_place(up, true);
-    iterate_and_place(down, false);
+    iterate_and_place(RndManager::GetInstance().GetRandomUintFromRange(dungeon_configs->min_upstairs_,
+                                                                       dungeon_configs->max_upstairs_), true);
+    
+    iterate_and_place(RndManager::GetInstance().GetRandomUintFromRange(dungeon_configs->min_downstairs_,
+                                                                       dungeon_configs->max_downstairs_), false);
 }
 
 void DungeonBuilder::PlaceRect(Rect const &rect, std::initializer_list<Tag_p> tags) {
@@ -501,29 +548,29 @@ void DungeonBuilder::SetMaxRoomPlacementAttempts(size_t attempts) {
 }
 
 void DungeonBuilder::SetMaxRoomSize(size_t width, size_t height) {
-    auto dungeon_configs {(DungeonMapConfigs&)map_->GetConfigs()};
-    
-    assert(width < dungeon_configs.map_width_
-           && height < dungeon_configs.map_height_
-           && width >= dungeon_configs.min_room_width_
-           && height >= dungeon_configs.min_room_height_
+    DungeonMapConfigs *dungeon_configs {&(DungeonMapConfigs&)map_->GetConfigs()};
+
+    assert(width < dungeon_configs->map_width_
+           && height < dungeon_configs->map_height_
+           && width >= dungeon_configs->min_room_width_
+           && height >= dungeon_configs->min_room_height_
            && map_->GetMap()->empty());
     
-    dungeon_configs.max_room_width_ = width;
-    dungeon_configs.max_room_height_ = height;
+    dungeon_configs->max_room_width_ = width;
+    dungeon_configs->max_room_height_ = height;
 }
 
 void DungeonBuilder::SetMinRoomSize(size_t width, size_t height) {
-    auto dungeon_configs {(DungeonMapConfigs&)map_->GetConfigs()};
+    DungeonMapConfigs *dungeon_configs {&(DungeonMapConfigs&)map_->GetConfigs()};
     
-    assert(width < dungeon_configs.map_width_
-           && height < dungeon_configs.map_height_
-           && width >= dungeon_configs.min_room_width_
-           && height >= dungeon_configs.min_room_height_
+    assert(width < dungeon_configs->map_width_
+           && height < dungeon_configs->map_height_
+           && width >= dungeon_configs->min_room_width_
+           && height >= dungeon_configs->min_room_height_
            && map_->GetMap()->empty());
 
-    dungeon_configs.min_room_width_ = width;
-    dungeon_configs.min_room_height_ = height;
+    dungeon_configs->min_room_width_ = width;
+    dungeon_configs->min_room_height_ = height;
 }
 
 void DungeonBuilder::UpdateRect(Rect const &rect,

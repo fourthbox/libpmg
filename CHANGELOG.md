@@ -1,3 +1,8 @@
+## [v0.3.2]
+### Changed
+- Minor bug fix.
+- Map configs are now returned as a raw pointer.
+
 ## [v0.3.1]
 ### Changed
 - Better integration of ineheritance for the Map and MapBuilder class trees.

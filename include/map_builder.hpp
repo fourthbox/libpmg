@@ -40,7 +40,6 @@ public:
      @return A pointer to the built map.
      */
     virtual std::unique_ptr<Map> &Build() = 0;
-    
 };
 
 }

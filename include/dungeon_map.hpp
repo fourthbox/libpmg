@@ -15,21 +15,21 @@ namespace libpmg {
  Struct that holds the DungeonMap configuration values
  */
 struct DungeonMapConfigs : public MapConfigs {
-    DungeonMapConfigs()
-    : rooms_ {20},
-    max_room_placement_attempts_ {10},
-    max_room_width_ {12},
-    max_room_height_ {12},
-    min_room_width_ {4},
-    min_room_height_ {4}
-    {}
-    
+    // Room settings
     std::size_t rooms_;
     std::size_t max_room_placement_attempts_;
     std::size_t max_room_width_;
     std::size_t max_room_height_;
     std::size_t min_room_width_;
     std::size_t min_room_height_;
+    
+    // Stairs settings
+    std::size_t min_upstairs_;
+    std::size_t max_upstairs_;
+    std::size_t min_downstairs_;
+    std::size_t max_downstairs_;
+    bool build_stairs_only_in_rooms_;
+    bool dig_space_around_stairs;
 };
 
 /**
