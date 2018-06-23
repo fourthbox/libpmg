@@ -38,9 +38,8 @@ public:
     
     /**
      Reset the map and re-initializes it.
-     @param keep_configs If true the new map will keep the same configs.
      */
-    void ResetMap(bool keep_configs) override;
+    void ResetMap() override;
     
     /**
      Generate a random number of rooms and digs them in the map.

@@ -90,7 +90,7 @@ void WorldBuilder::ApplyHeightMap() {
     }
 }
 
-void WorldBuilder::ResetMap(bool keep_configs) {
+void WorldBuilder::ResetMap() {
     this->InitMap();
     // keep configs
     this->height_map_.reset();

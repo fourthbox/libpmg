@@ -27,7 +27,7 @@ public:
     /**
      Reset the map and re-initializes it.
      */
-    void ResetMap(bool keep_configs) override;
+    void ResetMap() override;
 
     /**
      Sets the extreme multiplier.

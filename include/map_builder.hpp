@@ -26,7 +26,7 @@ public:
     /**
      Reset the map and re-initializes it.
      */
-    virtual void ResetMap(bool keep_configs) = 0;
+    virtual void ResetMap() = 0;
     
     /**
      Set the size of the map.

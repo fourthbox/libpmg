@@ -207,10 +207,8 @@ void DungeonBuilder::InitMap() {
     }
 }
 
-void DungeonBuilder::ResetMap(bool keep_configs) {
-    auto configs {(DungeonMapConfigs&)map_->GetConfigs()};
-    map_ = std::make_unique<DungeonMap>(configs);
-    this->InitMap();
+void DungeonBuilder::ResetMap() {
+    map_ = std::make_unique<DungeonMap>();
 }
 
 void DungeonBuilder::GenerateRooms() {
